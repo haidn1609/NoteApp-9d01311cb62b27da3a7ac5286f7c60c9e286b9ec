@@ -7,5 +7,7 @@
     <string name="create_new">Create New Note</string>
     <string name="delete">Delete Note</string>
     <string name="not_note">There are currently no notes.</string>
+    <string name="hide_et_title">Edit title note.</string>
     <string name="toast_change_theme">Theme changes success.</string>
+    <string name="toast_change_bg">Background changes success.</string>
 </resources>

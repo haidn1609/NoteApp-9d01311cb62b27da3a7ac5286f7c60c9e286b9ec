@@ -71,14 +71,16 @@ public class MainActivity extends AppCompatActivity implements KEY {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
         binding.rcvListNote.setLayoutManager(layoutManager);
         binding.rcvListNote.setAdapter(rcvNoteAdapter);
+        getListNote();
+        //add event
         rcvNoteAdapter.setOnClickItem(new RcvNoteItemClick() {
             @Override
             public void editItemClick(NoteModel noteModel) {
                 Toast.makeText(MainActivity.this, noteModel.getId() + "." + noteModel.getTitle(), Toast.LENGTH_SHORT).show();
+                Intent itEditNote = new Intent(MainActivity.this, BackgroundSettingActivity.class);
+
             }
         });
-        getListNote();
-        //add event
         binding.iconSetting.setOnClickListener(v -> {
             Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
             Intent itBackgroundSetting = new Intent(MainActivity.this, BackgroundSettingActivity.class);
@@ -105,13 +107,13 @@ public class MainActivity extends AppCompatActivity implements KEY {
     }
 
     private void initView() {
-        if (sp.getString(BACKGROUND_COLOR, "NONE").equals("NONE")) {
+        if (sp.getString(BACKGROUND_COLOR, "-1").equals("-1")) {
             binding.mainLayout.setBackgroundColor(getResources().getColor(R.color.bg_white));
         } else {
             binding.mainLayout.setBackground(getResources().getDrawable(Integer.parseInt(sp.getString(BACKGROUND_COLOR, "NONE"))));
         }
-        if (sp.getString(APPBAR_COLOR, "NONE").equals("NONE")) {
-            binding.appBar.setBackgroundColor(getResources().getColor(R.color.theme_green));
+        if (sp.getString(APPBAR_COLOR, "-1").equals("-1")) {
+            binding.appBar.setBackgroundColor(getResources().getColor(R.color.theme_blue));
         } else {
             binding.appBar.setBackgroundColor(getResources().getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, "500021"))));
 
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        Log.d("getListNote", "onError: get list note err");
+                        Log.d("getListNote", "onError: get list note err"+e);
                     }
                 });
     }
