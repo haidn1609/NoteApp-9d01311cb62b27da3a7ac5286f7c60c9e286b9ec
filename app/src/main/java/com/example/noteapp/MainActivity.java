@@ -51,19 +51,14 @@ public class MainActivity extends AppCompatActivity implements KEY {
             new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-
+                    Intent itNote = result.getData();
                     switch (result.getResultCode()) {
                         case RESULT_CODE_BACKGROUND_SETTING: {
                             initView();
                             break;
                         }
-                        case RESULT_CODE_ADD_NOTE: {
-                            Intent itNote = result.getData();
-                            assert itNote != null;
-                            addNote(itNote.getStringExtra(NOTE_TITLE)
-                                    , itNote.getStringExtra(NOTE_CONTENT)
-                                    , itNote.getIntExtra(NOTE_THEME_BG, -1)
-                                    , itNote.getIntExtra(NOTE_THEME_TT, -1));
+                        case RESULT_CODE_EDIT_NOTE: {
+                            getListNote();
                             break;
                         }
                         default:
@@ -78,18 +73,14 @@ public class MainActivity extends AppCompatActivity implements KEY {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         appDatabase = AppDatabase.getInstance(this);
         sp = getBaseContext().getSharedPreferences(SP_BACKGROUND_SETTING, MODE_PRIVATE);
+
         rcvNoteAdapter = new RcvNoteAdapter();
         noteModelList = new ArrayList<>();
         initView();
         //set data
         getListNote();
         //add event
-        rcvNoteAdapter.setOnClickItem(new RcvNoteItemClick() {
-            @Override
-            public void editItemClick(NoteModel noteModel) {
-                Toast.makeText(MainActivity.this, noteModel.getId() + "." + noteModel.getTitle(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        rcvNoteAdapter.setOnClickItem(noteModel -> updateNoteById(noteModel.getId()));
         binding.iconSetting.setOnClickListener(v -> {
             Intent itBackgroundSetting = new Intent(MainActivity.this, BackgroundSettingActivity.class);
             activityResultLauncher.launch(itBackgroundSetting);
@@ -118,14 +109,14 @@ public class MainActivity extends AppCompatActivity implements KEY {
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initView() {
         if (sp.getString(BACKGROUND_COLOR, "-1").equals("-1")) {
-            binding.mainLayout.setBackgroundColor(getResources().getColor(R.color.bg_white));
+            binding.mainLayout.setBackgroundColor(getColor(R.color.bg_white));
         } else {
-            binding.mainLayout.setBackground(getResources().getDrawable(Integer.parseInt(sp.getString(BACKGROUND_COLOR, "NONE"))));
+            binding.mainLayout.setBackground(getDrawable(Integer.parseInt(sp.getString(BACKGROUND_COLOR, "NONE"))));
         }
         if (sp.getString(APPBAR_COLOR, "-1").equals("-1")) {
-            binding.appBar.setBackgroundColor(getResources().getColor(R.color.theme_blue));
+            binding.appBar.setBackgroundColor(getColor(R.color.theme_blue));
         } else {
-            binding.appBar.setBackgroundColor(getResources().getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, "500021"))));
+            binding.appBar.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, "500021"))));
         }
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
         binding.rcvListNote.setLayoutManager(layoutManager);
@@ -161,35 +152,31 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 });
     }
 
-    private void addNote(String title, String content, int bgColor, int ttColor) {
-        NoteModel noteModel = new NoteModel();
-        Calendar calendar = Calendar.getInstance();
-        noteModel.setTitle(title);
-        noteModel.setContent(content);
-        noteModel.setModifyDay(calendar.getTime());
-        noteModel.setColorBackgroud(bgColor);
-        noteModel.setColorTitle(ttColor);
-
-        appDatabase.noteDAO().insert(noteModel).subscribeOn(Schedulers.io())
+    private void updateNoteById(Long id){
+        appDatabase.noteDAO().getNoteById(id).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
+                .subscribe(new SingleObserver<NoteModel>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
                         mDisposable = d;
                     }
 
                     @Override
-                    public void onComplete() {
-                        getListNote();
+                    public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull NoteModel noteModel) {
+                        Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(NOTE,noteModel);
+                        itEditNote.putExtra(ACTION, ACTION_EDIT);
+                        itEditNote.putExtras(bundle);
+                        activityResultLauncher.launch(itEditNote);
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        Log.d(TAG, "onError: " + e);
+                        Log.d(TAG, "onError: get note err "+e);
                     }
                 });
     }
-
     private static void showBtnMenu(ActivityMainBinding binding, boolean show) {
         Transition transitionIn = new Fade();
         transitionIn.setDuration(1000);

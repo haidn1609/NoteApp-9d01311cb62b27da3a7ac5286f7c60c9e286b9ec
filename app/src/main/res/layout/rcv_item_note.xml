@@ -34,7 +34,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:padding="3dp"
-            android:text="title"
             android:textColor="@color/text_black"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -54,11 +53,7 @@
             android:layout_below="@id/tv_title_note"
             android:ellipsize="end"
             android:maxLines="6"
-            android:paddingLeft="6dp"
-            android:paddingTop="3dp"
-            android:paddingRight="3dp"
-            android:paddingBottom="3dp"
-            android:text="content"
+            android:padding="6dp"
             android:textColor="@color/text_black"
             android:textSize="10sp" />
 

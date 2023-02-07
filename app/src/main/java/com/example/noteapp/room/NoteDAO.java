@@ -30,5 +30,5 @@ public interface NoteDAO {
     Single<List<NoteModel>> getAllNote();
 
     @Query("SELECT * FROM notes WHERE id = :id")
-    NoteModel getNoteById(Long id);
+    Single<NoteModel> getNoteById(Long id);
 }

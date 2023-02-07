@@ -7,11 +7,7 @@ public interface KEY {
     String ACTION= "ACTION";
     String ACTION_ADD= "ACTION_ADD";
     String ACTION_EDIT= "ACTION_EDIT";
-    String NOTE_TITLE= "NOTE_TITLE";
-    String NOTE_CONTENT= "NOTE_CONTENT";
-    String NOTE_THEME_BG= "NOTE_THEME_BG";
-    String NOTE_THEME_TT= "NOTE_THEME_TT";
+    String NOTE= "NOTE";
     int RESULT_CODE_BACKGROUND_SETTING = 101;
-    int RESULT_CODE_ADD_NOTE = 102;
-    int RESULT_CODE_EDIT_NOTE = 103;
+    int RESULT_CODE_EDIT_NOTE = 102;
 }

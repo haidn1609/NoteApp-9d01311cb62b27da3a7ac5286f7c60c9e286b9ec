@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.noteapp.R;
@@ -40,11 +41,9 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
     public RcvNoteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.rcv_item_note, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RcvNoteAdapter.ViewHolder holder, int position) {
         NoteModel note = noteList.get(position);
@@ -52,20 +51,10 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         SimpleDateFormat formatDay = new SimpleDateFormat("dd/MM/yyyy");
         holder.noteTile.setBackgroundColor(mContext.getResources().getColor(note.getColorTitle()));
         holder.layoutNoteItem.setBackgroundTintList(mContext.getResources().getColorStateList(note.getColorBackgroud()));
-        holder.tvTileNote.setText(note.getId() + "." + note.getTitle());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            holder.tvContentNote.setText(Html.fromHtml(note.getContent(),Html.FROM_HTML_MODE_COMPACT));
-        } else {
-            holder.tvContentNote.setText(Html.fromHtml(note.getContent()));
-        }
+        holder.tvTileNote.setText(note.getTitle());
+        holder.tvContentNote.setText(Html.fromHtml(note.getContent(),Html.FROM_HTML_MODE_COMPACT));
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
-
-        holder.layoutNoteItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rcvNoteItemClick.editItemClick(note);
-            }
-        });
+        holder.layoutNoteItem.setOnClickListener(v -> rcvNoteItemClick.editItemClick(note));
     }
 
     @Override
