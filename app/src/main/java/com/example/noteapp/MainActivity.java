@@ -77,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements KEY {
             @Override
             public void editItemClick(NoteModel noteModel) {
                 Toast.makeText(MainActivity.this, noteModel.getId() + "." + noteModel.getTitle(), Toast.LENGTH_SHORT).show();
-                Intent itEditNote = new Intent(MainActivity.this, BackgroundSettingActivity.class);
-
             }
         });
         binding.iconSetting.setOnClickListener(v -> {
@@ -87,9 +85,13 @@ public class MainActivity extends AppCompatActivity implements KEY {
             activityResultLauncher.launch(itBackgroundSetting);
         });
         binding.btnAddNote.setOnClickListener(v -> {
-            onClickAddNote();
-            getListNote();
+            //onClickAddNote();
+            //getListNote();
             binding.floatingMenuBt.collapse();
+            Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
+            itEditNote.putExtra(ACTION,ACTION_ADD);
+            activityResultLauncher.launch(itEditNote);
+
         });
         binding.rcvListNote.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

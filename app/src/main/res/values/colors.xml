@@ -35,9 +35,11 @@
     <!--    text color-->
     <color name="text_title">#FFFFFFFF</color>
     <color name="text_hide">#B25E5B5B</color>
+    <color name="text_hide_white">#C4FFFFFF</color>
     <color name="text_black">#B2000000</color>
     <!--    icon color-->
     <color name="icon_white">#FFFFFFFF</color>
     <!--    menu color-->
     <color name="bg_menu_label">#B2A0A0A0</color>
+    <color name="bg_rich_edit">#B2A0A0A0</color>
 </resources>
