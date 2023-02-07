@@ -8,6 +8,8 @@
     <string name="delete">Delete Note</string>
     <string name="not_note">There are currently no notes.</string>
     <string name="hide_et_title">Edit title note.</string>
+    <string name="hide_et_content">Insert text here...</string>
     <string name="toast_change_theme">Theme changes success.</string>
     <string name="toast_change_bg">Background changes success.</string>
+    <string name="no_title">No Title.</string>
 </resources>

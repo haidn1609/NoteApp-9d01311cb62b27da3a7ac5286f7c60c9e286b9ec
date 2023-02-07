@@ -2,6 +2,8 @@ package com.example.noteapp.adapter.recyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +53,11 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         holder.noteTile.setBackgroundColor(mContext.getResources().getColor(note.getColorTitle()));
         holder.layoutNoteItem.setBackgroundTintList(mContext.getResources().getColorStateList(note.getColorBackgroud()));
         holder.tvTileNote.setText(note.getId() + "." + note.getTitle());
-        holder.tvContentNote.setText(note.getContent());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            holder.tvContentNote.setText(Html.fromHtml(note.getContent(),Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            holder.tvContentNote.setText(Html.fromHtml(note.getContent()));
+        }
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
 
         holder.layoutNoteItem.setOnClickListener(new View.OnClickListener() {

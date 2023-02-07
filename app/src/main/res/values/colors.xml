@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <!--    background note-->
     <color name="bg_white">#FFFFFFFF</color>
+    <color name="bg_opacity">#00FFFFFF</color>
     <color name="bg_note_green">#EEFEF2</color>
     <color name="bg_note_orange">#FFCA7D</color>
     <color name="bg_note_pink">#FDE7F3</color>
