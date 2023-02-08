@@ -26,6 +26,9 @@ public interface NoteDAO {
     @Delete
     Completable delete(NoteModel noteModels);
 
+    @Query("delete from notes where id in (:ids)")
+    Completable deleteListItem(List<Long> ids);
+
     @Query("SELECT * FROM notes")
     Single<List<NoteModel>> getAllNote();
 

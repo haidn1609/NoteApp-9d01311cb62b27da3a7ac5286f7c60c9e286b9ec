@@ -19,16 +19,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.noteapp.adapter.recyclerView.RcvNoteAdapter;
+import com.example.noteapp.adapter.recyclerView.RcvNoteItemClick;
 import com.example.noteapp.databinding.ActivityMainBinding;
 import com.example.noteapp.model.NoteModel;
 import com.example.noteapp.room.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -40,10 +44,8 @@ public class MainActivity extends AppCompatActivity implements KEY {
     private List<NoteModel> noteModelList;
     private AppDatabase appDatabase;
     private SharedPreferences sp;
-
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
-                Intent itNote = result.getData();
                 switch (result.getResultCode()) {
                     case RESULT_CODE_BACKGROUND_SETTING: {
                         initView();
@@ -71,7 +73,35 @@ public class MainActivity extends AppCompatActivity implements KEY {
         //set data
         getListNote();
         //add event
-        rcvNoteAdapter.setOnClickItem(noteModel -> updateNoteById(noteModel.getId()));
+        binding.iconBackMode.setOnClickListener(v -> {
+            binding.appBarSelect.setVisibility(View.INVISIBLE);
+            rcvNoteAdapter.setSelectMode(false, 0);
+            getListNote();
+        });
+        rcvNoteAdapter.setOnClickItem(new RcvNoteItemClick() {
+            @Override
+            public void editItemClick(NoteModel noteModel) {
+                updateNoteById(noteModel.getId());
+            }
+
+            @Override
+            public void setSelectMode(boolean selectMode) {
+                if (selectMode) {
+                    binding.appBarSelect.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void setCountSelect(int count) {
+                binding.txtCountSelect.setText("SELECT " + count + " NOTE");
+            }
+        });
+        binding.iconDelete.setOnClickListener(v -> {
+            List<Long> filter = noteModelList.stream().filter(noteModel -> noteModel.isSelect())
+                    .map(noteModel -> noteModel.getId())
+                    .collect(Collectors.toList());
+            deleteMultiNote(filter);
+        });
         binding.iconSetting.setOnClickListener(v -> {
             Intent itBackgroundSetting = new Intent(MainActivity.this, BackgroundSettingActivity.class);
             activityResultLauncher.launch(itBackgroundSetting);
@@ -130,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
                             binding.textNotNote.setVisibility(View.GONE);
                             binding.rcvListNote.setVisibility(View.VISIBLE);
                             rcvNoteAdapter.setDataAdapter(noteModelList, MainActivity.this);
+                            binding.rcvListNote.setAdapter(rcvNoteAdapter);
                         } else {
                             binding.textNotNote.setVisibility(View.VISIBLE);
                             binding.rcvListNote.setVisibility(View.GONE);
@@ -143,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 });
     }
 
-    private void updateNoteById(Long id){
+    private void updateNoteById(Long id) {
         appDatabase.noteDAO().getNoteById(id).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<NoteModel>() {
@@ -156,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
                     public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull NoteModel noteModel) {
                         Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(NOTE,noteModel);
+                        bundle.putSerializable(NOTE, noteModel);
                         itEditNote.putExtra(ACTION, ACTION_EDIT);
                         itEditNote.putExtras(bundle);
                         activityResultLauncher.launch(itEditNote);
@@ -164,16 +195,38 @@ public class MainActivity extends AppCompatActivity implements KEY {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        Log.d(TAG, "onError: get note err "+e);
+                        Log.d(TAG, "onError: get note err " + e);
                     }
                 });
     }
+
     private static void showBtnMenu(ActivityMainBinding binding, boolean show) {
         Transition transitionIn = new Fade();
         transitionIn.setDuration(1000);
         transitionIn.addTarget(R.id.floating_menu_bt);
         TransitionManager.beginDelayedTransition(binding.mainLayout, transitionIn);
         binding.floatingMenuBt.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void deleteMultiNote(List<Long> ids) {
+        appDatabase.noteDAO().deleteListItem(ids).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+                        mDisposable = d;
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        getListNote();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        Log.d("delete multi note", "onError: delete multi note err" + e);
+                    }
+                });
     }
 
     @Override

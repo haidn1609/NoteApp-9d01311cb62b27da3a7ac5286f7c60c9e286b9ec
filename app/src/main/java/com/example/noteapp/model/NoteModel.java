@@ -16,9 +16,12 @@ public class NoteModel implements Serializable {
     private String title;
     private String content;
 
-    private int colorBackgroud;
+    private int colorBackground;
 
     private int colorTitle;
+
+    private boolean isSelect;
+
     @TypeConverters(DateConverter.class)
     private Date modifyDay;
 
@@ -55,12 +58,12 @@ public class NoteModel implements Serializable {
         this.modifyDay = modifyDay;
     }
 
-    public int getColorBackgroud() {
-        return colorBackgroud;
+    public int getColorBackground() {
+        return colorBackground;
     }
 
-    public void setColorBackgroud(int colorBackgroud) {
-        this.colorBackgroud = colorBackgroud;
+    public void setColorBackground(int colorBackground) {
+        this.colorBackground = colorBackground;
     }
 
     public int getColorTitle() {
@@ -69,5 +72,27 @@ public class NoteModel implements Serializable {
 
     public void setColorTitle(int colorTitle) {
         this.colorTitle = colorTitle;
+    }
+
+    public boolean isSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+
+    }
+
+    @Override
+    public String toString() {
+        return "NoteModel{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", colorBackground=" + colorBackground +
+                ", colorTitle=" + colorTitle +
+                ", isSelect=" + isSelect +
+                ", modifyDay=" + modifyDay +
+                '}';
     }
 }

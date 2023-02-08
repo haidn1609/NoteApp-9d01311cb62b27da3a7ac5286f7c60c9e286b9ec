@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.noteapp.R;
 import com.example.noteapp.model.NoteModel;
 
@@ -25,6 +27,8 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
     private List<NoteModel> noteList;
     private RcvNoteItemClick rcvNoteItemClick;
     private Context mContext;
+    private boolean selectMode = false;
+    private int countSelect = 0;
 
     public void setDataAdapter(List<NoteModel> datas, Context mcontext) {
         this.noteList = datas;
@@ -34,6 +38,11 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
 
     public void setOnClickItem(RcvNoteItemClick rcvNoteItemClick) {
         this.rcvNoteItemClick = rcvNoteItemClick;
+    }
+
+    public void setSelectMode(boolean selectMode, int countSelect) {
+        this.selectMode = selectMode;
+        this.countSelect = countSelect;
     }
 
     @NonNull
@@ -50,11 +59,46 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatDay = new SimpleDateFormat("dd/MM/yyyy");
         holder.noteTile.setBackgroundColor(mContext.getColor(note.getColorTitle()));
-        holder.layoutNoteItem.setBackgroundTintList(mContext.getColorStateList(note.getColorBackgroud()));
+        holder.layoutNoteItem.setBackgroundTintList(mContext.getColorStateList(note.getColorBackground()));
         holder.tvTileNote.setText(note.getTitle());
-        holder.tvContentNote.setText(Html.fromHtml(note.getContent(),Html.FROM_HTML_MODE_COMPACT));
+        holder.tvContentNote.setText(Html.fromHtml(note.getContent(), Html.FROM_HTML_MODE_COMPACT));
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
-        holder.layoutNoteItem.setOnClickListener(v -> rcvNoteItemClick.editItemClick(note));
+
+        holder.layoutNoteItem.setOnClickListener(v -> {
+            if (!selectMode) {
+                rcvNoteItemClick.editItemClick(note);
+            } else {
+                if (note.isSelect()) {
+                    countSelect--;
+                    rcvNoteItemClick.setCountSelect(countSelect);
+                    holder.lottieAnimationView.setSpeed(-2);
+                    note.setSelect(false);
+                } else {
+                    countSelect++;
+                    rcvNoteItemClick.setCountSelect(countSelect);
+                    holder.lottieAnimationView.setSpeed(1);
+                    note.setSelect(true);
+                }
+                holder.lottieAnimationView.playAnimation();
+            }
+        });
+        holder.layoutNoteItem.setOnLongClickListener(v -> {
+            rcvNoteItemClick.setSelectMode(true);
+            selectMode = true;
+            if (note.isSelect()) {
+                holder.lottieAnimationView.setSpeed(-2);
+                countSelect--;
+                rcvNoteItemClick.setCountSelect(countSelect);
+                note.setSelect(false);
+            } else {
+                countSelect++;
+                rcvNoteItemClick.setCountSelect(countSelect);
+                holder.lottieAnimationView.setSpeed(1);
+                note.setSelect(true);
+            }
+            holder.lottieAnimationView.playAnimation();
+            return true;
+        });
     }
 
     @Override
@@ -68,6 +112,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         TextView tvModifyDateNote;
         View noteTile;
         CardView layoutNoteItem;
+        LottieAnimationView lottieAnimationView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,6 +121,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             tvModifyDateNote = itemView.findViewById(R.id.tv_note_modify);
             noteTile = itemView.findViewById(R.id.note_title);
             layoutNoteItem = itemView.findViewById(R.id.layout_item_note);
+            lottieAnimationView = itemView.findViewById(R.id.lottie_checked);
         }
     }
 }

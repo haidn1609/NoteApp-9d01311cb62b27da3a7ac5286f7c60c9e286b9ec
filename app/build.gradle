@@ -52,6 +52,8 @@ dependencies {
     implementation "com.github.skydoves:powermenu:2.2.2"
     //bottom sheet
     implementation 'com.google.android.material:material:1.8.0'
+    //lottie
+    implementation 'com.airbnb.android:lottie:5.2.0'
     //  room data base
     def room_version = "2.5.0"
     implementation "androidx.room:room-runtime:$room_version"

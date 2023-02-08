@@ -76,7 +76,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
                 content = binding.etNoteContent.getHtml();
             }
             if (nowAction.equals(ACTION_ADD)) {
-                addNoteItem(title, content, R.color.bg_note_blue, R.color.tt_note_blue);
+                addNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
             } else {
                 updateNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
             }
@@ -102,8 +102,11 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             binding.etNoteTitle.setText(noteModel.getTitle());
             binding.etNoteContent.setHtml(noteModel.getContent());
             binding.appBarEditNote.setBackgroundColor(getColor(noteModel.getColorTitle()));
-            binding.editNoteLayout.setBackgroundColor(getColor(noteModel.getColorBackgroud()));
-            setOptionNoteTheme(new OptionNoteTheme(noteModel.getColorBackgroud(), TYPE_COLOR, noteModel.getColorTitle(), TYPE_COLOR));
+            binding.editNoteLayout.setBackgroundColor(getColor(noteModel.getColorBackground()));
+            setOptionNoteTheme(new OptionNoteTheme(noteModel.getColorBackground(), TYPE_COLOR, noteModel.getColorTitle(), TYPE_COLOR));
+        }else if(nowAction.equals(ACTION_ADD)){
+            setOptionNoteTheme(new OptionNoteTheme(R.color.bg_note_blue, TYPE_COLOR, R.color.tt_note_blue, TYPE_COLOR));
+
         }
     }
 
@@ -140,7 +143,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         noteModel.setTitle(title);
         noteModel.setContent(content);
         noteModel.setModifyDay(calendar.getTime());
-        noteModel.setColorBackgroud(bgColor);
+        noteModel.setColorBackground(bgColor);
         noteModel.setColorTitle(ttColor);
 
         appDatabase.noteDAO().insert(noteModel).subscribeOn(Schedulers.io())
@@ -169,7 +172,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         Calendar calendar = Calendar.getInstance();
         noteModel.setTitle(title);
         noteModel.setContent(content);
-        noteModel.setColorBackgroud(bgColor);
+        noteModel.setColorBackground(bgColor);
         noteModel.setColorTitle(ttColor);
         noteModel.setModifyDay(calendar.getTime());
 
