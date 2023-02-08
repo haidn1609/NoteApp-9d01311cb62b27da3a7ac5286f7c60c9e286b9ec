@@ -18,7 +18,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.noteapp.adapter.recyclerView.RcvNoteAdapter;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
     private List<NoteModel> noteModelList;
     private AppDatabase appDatabase;
     private SharedPreferences sp;
+    private boolean isSearch = false;
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
                 switch (result.getResultCode()) {
@@ -73,10 +78,42 @@ public class MainActivity extends AppCompatActivity implements KEY {
         //set data
         getListNote();
         //add event
+        binding.iconSearch.setOnClickListener(v -> {
+            setViewSearch();
+            //changeKeyboardState();
+        });
+        binding.etSearchNote.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                switch (actionId){
+                    case EditorInfo.IME_ACTION_SEARCH:
+                        Log.d(TAG, "onEditorAction: "+v.getText().toString());
+                        v.setText("");
+                        setViewSearch();
+                }
+                return false;
+            }
+        });
         binding.iconBackMode.setOnClickListener(v -> {
             binding.appBarSelect.setVisibility(View.INVISIBLE);
             rcvNoteAdapter.setSelectMode(false, 0);
             getListNote();
+        });
+        binding.iconDelete.setOnClickListener(v -> {
+            List<Long> filter = noteModelList.stream().filter(noteModel -> noteModel.isSelect())
+                    .map(noteModel -> noteModel.getId())
+                    .collect(Collectors.toList());
+            deleteMultiNote(filter);
+        });
+        binding.iconSetting.setOnClickListener(v -> {
+            Intent itBackgroundSetting = new Intent(MainActivity.this, BackgroundSettingActivity.class);
+            activityResultLauncher.launch(itBackgroundSetting);
+        });
+        binding.btnAddNote.setOnClickListener(v -> {
+            binding.floatingMenuBt.collapse();
+            Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
+            itEditNote.putExtra(ACTION, ACTION_ADD);
+            activityResultLauncher.launch(itEditNote);
         });
         rcvNoteAdapter.setOnClickItem(new RcvNoteItemClick() {
             @Override
@@ -96,22 +133,6 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 binding.txtCountSelect.setText("SELECT " + count + " NOTE");
             }
         });
-        binding.iconDelete.setOnClickListener(v -> {
-            List<Long> filter = noteModelList.stream().filter(noteModel -> noteModel.isSelect())
-                    .map(noteModel -> noteModel.getId())
-                    .collect(Collectors.toList());
-            deleteMultiNote(filter);
-        });
-        binding.iconSetting.setOnClickListener(v -> {
-            Intent itBackgroundSetting = new Intent(MainActivity.this, BackgroundSettingActivity.class);
-            activityResultLauncher.launch(itBackgroundSetting);
-        });
-        binding.btnAddNote.setOnClickListener(v -> {
-            binding.floatingMenuBt.collapse();
-            Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
-            itEditNote.putExtra(ACTION, ACTION_ADD);
-            activityResultLauncher.launch(itEditNote);
-        });
         binding.rcvListNote.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -125,6 +146,35 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 }
             }
         });
+    }
+
+    private void setViewSearch() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (isSearch) {
+            binding.appBarTitle.setVisibility(View.VISIBLE);
+            binding.etSearchNote.setVisibility(View.GONE);
+            binding.etSearchNote.clearFocus();
+            inputMethodManager.hideSoftInputFromWindow(binding.etSearchNote.getWindowToken(), 0);
+            isSearch = false;
+        } else {
+            binding.appBarTitle.setVisibility(View.GONE);
+            binding.etSearchNote.setVisibility(View.VISIBLE);
+            binding.etSearchNote.requestFocus();
+            inputMethodManager.showSoftInput(binding.etSearchNote, InputMethodManager.SHOW_FORCED);
+            isSearch = true;
+        }
+
+    }
+
+    private void changeKeyboardState() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            if (isSearch) {
+                inputMethodManager.showSoftInput(binding.etSearchNote, InputMethodManager.SHOW_FORCED);
+            } else {
+                inputMethodManager.hideSoftInputFromWindow(binding.etSearchNote.getWindowToken(), 0);
+            }
+        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
