@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_item_note_theme"
+    android:layout_width="60dp"
+    android:layout_height="120dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/bg_theme_item"
+    android:backgroundTint="@color/bg_note_blue"
+    android:shape="ring"
+    app:cardCornerRadius="5dp">
+
+    <LinearLayout
+        android:id="@+id/tt_item_note_theme"
+        android:layout_width="match_parent"
+        android:layout_height="13dp"
+        android:background="@color/tt_note_blue"
+        android:orientation="horizontal"
+        android:weightSum="8">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingVertical="5dp"
+            android:src="@drawable/icon_back_arrow"
+            app:tint="@color/icon_white" />
+
+        <TextView
+            android:textColor="@color/text_hide_white"
+            android:paddingVertical="4.5dp"
+            android:text="@string/hide_et_title"
+            android:textSize="3sp"
+            android:layout_weight="6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingVertical="5dp"
+            android:src="@drawable/icon_menu"
+            app:tint="@color/icon_white" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

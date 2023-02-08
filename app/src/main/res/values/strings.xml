@@ -4,6 +4,7 @@
     <string name="title">Note App</string>
     <string name="background">Background</string>
     <string name="theme">Theme</string>
+    <string name="change_theme">Change Theme</string>
     <string name="create_new">Create New Note</string>
     <string name="delete">Delete Note</string>
     <string name="not_note">There are currently no notes.</string>

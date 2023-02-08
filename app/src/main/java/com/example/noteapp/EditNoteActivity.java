@@ -6,15 +6,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 
 import com.example.noteapp.databinding.ActivityEditNoteBinding;
 import com.example.noteapp.model.NoteModel;
+import com.example.noteapp.model.OptionNoteTheme;
 import com.example.noteapp.room.AppDatabase;
+import com.example.noteapp.view.BottomSheetThemeFragment;
+import com.skydoves.powermenu.MenuAnimation;
+import com.skydoves.powermenu.PowerMenu;
+import com.skydoves.powermenu.PowerMenuItem;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
@@ -28,6 +37,8 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
     private String nowAction;
     private Disposable mDisposable;
     private AppDatabase appDatabase;
+    private PowerMenu powerMenu;
+    private OptionNoteTheme optionNoteTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +47,25 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         appDatabase = AppDatabase.getInstance(this);
         nowAction = getIntent().getStringExtra(ACTION);
         initView();
+        List<PowerMenuItem> menuItemList = new ArrayList<>();
+        menuItemList.add(new PowerMenuItem(getString(R.string.change_theme), false));
+        powerMenu = new PowerMenu.Builder(this)
+                .addItemList(menuItemList)
+                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                .setTextColor(getColor(R.color.text_black))
+                .setTextGravity(Gravity.CENTER)
+                .setSelectedTextColor(Color.WHITE)
+                .setMenuColor(Color.WHITE)
+                .setSelectedMenuColor(getColor(R.color.text_black))
+                .setOnMenuItemClickListener((position, item) -> {
+                    Log.d(TAG, "onItemClick: " + item.title);
+                    powerMenu.dismiss();
+                    openBtSheetTheme();
+                })
+                .build();
         //set event
         configurationRichEdit();
-
+        binding.iconMenu.setOnClickListener(v -> powerMenu.showAsAnchorCenter(v));
         binding.iconBackEditNote.setOnClickListener(v -> {
             String title = getString(R.string.no_title);
             String content = "";
@@ -51,7 +78,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             if (nowAction.equals(ACTION_ADD)) {
                 addNoteItem(title, content, R.color.bg_note_blue, R.color.tt_note_blue);
             } else {
-                updateNoteItem(title, content, R.color.bg_note_orange, R.color.tt_note_orange);
+                updateNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
             }
 
         });
@@ -76,6 +103,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             binding.etNoteContent.setHtml(noteModel.getContent());
             binding.appBarEditNote.setBackgroundColor(getColor(noteModel.getColorTitle()));
             binding.editNoteLayout.setBackgroundColor(getColor(noteModel.getColorBackgroud()));
+            setOptionNoteTheme(new OptionNoteTheme(noteModel.getColorBackgroud(), TYPE_COLOR, noteModel.getColorTitle(), TYPE_COLOR));
         }
     }
 
@@ -166,11 +194,42 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
                 });
     }
 
+    private void openBtSheetTheme() {
+        List<OptionNoteTheme> listTheme = getListTheme();
+        BottomSheetThemeFragment btsThemeFragment = BottomSheetThemeFragment.newInstance(listTheme);
+        btsThemeFragment.show(getSupportFragmentManager(), btsThemeFragment.getTag());
+
+    }
+
+    private List<OptionNoteTheme> getListTheme() {
+        List<OptionNoteTheme> listTheme = new ArrayList<>();
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_grey, TYPE_COLOR, R.color.tt_note_grey, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_orange, TYPE_COLOR, R.color.tt_note_orange, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_surf_turf, TYPE_COLOR, R.color.tt_note_surf_turf, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_red_org, TYPE_COLOR, R.color.tt_note_red_org, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_late, TYPE_COLOR, R.color.tt_note_coffee, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_green, TYPE_COLOR, R.color.tt_note_green, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_blue, TYPE_COLOR, R.color.tt_note_blue, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_blue_green, TYPE_COLOR, R.color.tt_note_blue_green, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_aquamarine, TYPE_COLOR, R.color.tt_note_turquoise, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_pink, TYPE_COLOR, R.color.tt_note_pink, TYPE_COLOR));
+        return listTheme;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mDisposable != null) {
             mDisposable.dispose();
         }
+    }
+
+    public void setOptionNoteTheme(OptionNoteTheme optionNoteTheme) {
+        this.optionNoteTheme = optionNoteTheme;
+    }
+    public void setThemeNote(OptionNoteTheme optionNoteTheme){
+        setOptionNoteTheme(optionNoteTheme);
+        binding.appBarEditNote.setBackgroundColor(getColor(optionNoteTheme.getTtValue()));
+        binding.editNoteLayout.setBackgroundColor(getColor(optionNoteTheme.getBgValue()));
     }
 }

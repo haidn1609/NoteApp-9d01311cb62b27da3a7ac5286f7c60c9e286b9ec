@@ -8,6 +8,9 @@ public interface KEY {
     String ACTION_ADD= "ACTION_ADD";
     String ACTION_EDIT= "ACTION_EDIT";
     String NOTE= "NOTE";
+    String BTS_THEME= "BTS_THEME";
+    String TYPE_COLOR= "COLOR";
+    String TYPE_IMG= "IMAGE";
     int RESULT_CODE_BACKGROUND_SETTING = 101;
     int RESULT_CODE_EDIT_NOTE = 102;
 }

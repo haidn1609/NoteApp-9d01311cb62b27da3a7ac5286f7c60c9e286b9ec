@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.noteapp.R;
 import com.squareup.picasso.Picasso;
 
@@ -30,26 +29,18 @@ public class RcvBackgroundAdapter extends RecyclerView.Adapter<RcvBackgroundAdap
     @NonNull
     @Override
     public RcvBackgroundAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rcv_item_background,parent,false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rcv_item_background, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull RcvBackgroundAdapter.ViewHolder holder, int position) {
         int val = listBackground.get(position);
         if (val>-1){
-//            Glide.with(mContext).load(mContext.getDrawable(val))
-//                    .error(R.drawable.baseline_error_24)
-//                    .into(holder.imgBgItem);
             Picasso.get().load(val)
                     .error(R.drawable.baseline_error_24)
                     .into(holder.imgBgItem);
         }
-        holder.imgBgItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rcvBgItemClick.selectBgItem(val);
-            }
-        });
+        holder.imgBgItem.setOnClickListener(v -> rcvBgItemClick.selectBgItem(val));
     }
 
     @Override
@@ -57,7 +48,7 @@ public class RcvBackgroundAdapter extends RecyclerView.Adapter<RcvBackgroundAdap
         return listBackground.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgBgItem;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

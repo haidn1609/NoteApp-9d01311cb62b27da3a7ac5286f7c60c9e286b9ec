@@ -12,15 +12,25 @@
     <color name="bg_opacity">#00FFFFFF</color>
     <color name="bg_note_green">#EEFEF2</color>
     <color name="bg_note_orange">#FFCA7D</color>
+    <color name="bg_note_surf_turf">#F4CC70</color>
+    <color name="bg_note_red_org">#FFD0C0</color>
     <color name="bg_note_pink">#FDE7F3</color>
     <color name="bg_note_blue">#B5F6FF</color>
+    <color name="bg_note_blue_green">#6FB98F</color>
+    <color name="bg_note_aquamarine">#98DBC6</color>
     <color name="bg_note_grey">#EAF1F1</color>
+    <color name="bg_note_late">#DDBC95</color>
     <!--    title note-->
     <color name="tt_note_green">#94FDAE</color>
     <color name="tt_note_orange">#FFAD36</color>
+    <color name="tt_note_surf_turf">#DE7A22</color>
+    <color name="tt_note_red_org">#FF8870</color>
     <color name="tt_note_pink">#FF88C9</color>
     <color name="tt_note_blue">#20B5C9</color>
+    <color name="tt_note_blue_green">#2C7873</color>
+    <color name="tt_note_turquoise">#5BC8AC</color>
     <color name="tt_note_grey">#979898</color>
+    <color name="tt_note_coffee">#B38867</color>
     <!--    theme color-->
     <color name="theme_blue">#2598F5</color>
     <color name="theme_orange">#FBAC47</color>
@@ -43,4 +53,6 @@
     <!--    menu color-->
     <color name="bg_menu_label">#B2A0A0A0</color>
     <color name="bg_rich_edit">#B2A0A0A0</color>
+    <!--    stroke-->
+    <color name="stk_line_grey">#D7CFCFCF</color>
 </resources>

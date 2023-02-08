@@ -12,9 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.noteapp.adapter.recyclerView.RcvBackgroundAdapter;
-import com.example.noteapp.adapter.recyclerView.RcvBgItemClick;
 import com.example.noteapp.adapter.recyclerView.RcvThemeAdapter;
-import com.example.noteapp.adapter.recyclerView.RcvThemeItemClick;
 import com.example.noteapp.databinding.ActivityBackgroudSettingBinding;
 
 import java.util.ArrayList;
@@ -35,19 +33,13 @@ public class BackgroundSettingActivity extends AppCompatActivity implements KEY 
         rcvBackgroundAdapter = new RcvBackgroundAdapter();
         initView();
 //      set event
-        rcvThemeAdapter.setRcvThemeItemClick(new RcvThemeItemClick() {
-            @Override
-            public void selectThemeItem(int val) {
-                sp.edit().putString(APPBAR_COLOR, val + "").commit();
-                Toast.makeText(BackgroundSettingActivity.this, getString(R.string.toast_change_theme), Toast.LENGTH_SHORT).show();
-            }
+        rcvThemeAdapter.setRcvThemeItemClick(val -> {
+            sp.edit().putString(APPBAR_COLOR, val + "").apply();
+            Toast.makeText(BackgroundSettingActivity.this, getString(R.string.toast_change_theme), Toast.LENGTH_SHORT).show();
         });
-        rcvBackgroundAdapter.setRcvBgItemClick(new RcvBgItemClick() {
-            @Override
-            public void selectBgItem(int val) {
-                sp.edit().putString(BACKGROUND_COLOR, val+"").commit();
-                Toast.makeText(BackgroundSettingActivity.this, getString(R.string.toast_change_theme), Toast.LENGTH_SHORT).show();
-            }
+        rcvBackgroundAdapter.setRcvBgItemClick(val -> {
+            sp.edit().putString(BACKGROUND_COLOR, val+"").apply();
+            Toast.makeText(BackgroundSettingActivity.this, getString(R.string.toast_change_theme), Toast.LENGTH_SHORT).show();
         });
         binding.iconBack.setOnClickListener(v -> {
             Intent intent = new Intent();

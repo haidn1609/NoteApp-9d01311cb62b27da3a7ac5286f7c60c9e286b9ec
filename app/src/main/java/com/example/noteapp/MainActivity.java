@@ -2,8 +2,6 @@ package com.example.noteapp;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -21,20 +19,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.noteapp.adapter.recyclerView.RcvNoteAdapter;
-import com.example.noteapp.adapter.recyclerView.RcvNoteItemClick;
 import com.example.noteapp.databinding.ActivityMainBinding;
 import com.example.noteapp.model.NoteModel;
 import com.example.noteapp.room.AppDatabase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -48,22 +42,19 @@ public class MainActivity extends AppCompatActivity implements KEY {
     private SharedPreferences sp;
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    Intent itNote = result.getData();
-                    switch (result.getResultCode()) {
-                        case RESULT_CODE_BACKGROUND_SETTING: {
-                            initView();
-                            break;
-                        }
-                        case RESULT_CODE_EDIT_NOTE: {
-                            getListNote();
-                            break;
-                        }
-                        default:
-                            Log.d(TAG, "onActivityResult: no code result");
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                Intent itNote = result.getData();
+                switch (result.getResultCode()) {
+                    case RESULT_CODE_BACKGROUND_SETTING: {
+                        initView();
+                        break;
                     }
+                    case RESULT_CODE_EDIT_NOTE: {
+                        getListNote();
+                        break;
+                    }
+                    default:
+                        Log.d(TAG, "onActivityResult: no code result");
                 }
             });
 

@@ -49,8 +49,8 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         NoteModel note = noteList.get(position);
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatDay = new SimpleDateFormat("dd/MM/yyyy");
-        holder.noteTile.setBackgroundColor(mContext.getResources().getColor(note.getColorTitle()));
-        holder.layoutNoteItem.setBackgroundTintList(mContext.getResources().getColorStateList(note.getColorBackgroud()));
+        holder.noteTile.setBackgroundColor(mContext.getColor(note.getColorTitle()));
+        holder.layoutNoteItem.setBackgroundTintList(mContext.getColorStateList(note.getColorBackgroud()));
         holder.tvTileNote.setText(note.getTitle());
         holder.tvContentNote.setText(Html.fromHtml(note.getContent(),Html.FROM_HTML_MODE_COMPACT));
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
