@@ -1,6 +1,7 @@
 package com.example.noteapp;
 
 public interface KEY {
+    String BLANK_BG = "https://www.whitescreen.online/image/white-background.png";
     String SP_BACKGROUND_SETTING = "BACKGROUND_SETTING";
     String BACKGROUND_COLOR = "BACKGROUND_COLOR";
     String APPBAR_COLOR = "APPBAR_COLOR";

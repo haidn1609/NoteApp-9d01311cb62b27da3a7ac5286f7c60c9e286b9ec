@@ -30,13 +30,24 @@
                 android:id="@+id/app_bar_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
                 android:layout_weight="5"
                 android:text="@string/title"
                 android:textAllCaps="true"
-                android:layout_marginVertical="10dp"
                 android:textColor="@color/text_title"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text"
+                android:visibility="gone"
+                app:closeIcon="@drawable/baseline_close_24"
+                app:iconifiedByDefault="true"
+                app:searchHintIcon="@null"
+                app:searchIcon="@null" />
 
             <EditText
                 android:id="@+id/et_search_note"
@@ -69,6 +80,7 @@
                 app:tint="@color/icon_white" />
         </LinearLayout>
 
+
         <LinearLayout
             android:id="@+id/app_bar_select"
             android:layout_width="match_parent"
@@ -94,7 +106,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
-                android:text="select 0 item"
                 android:textAllCaps="true"
                 android:textColor="@color/text_title"
                 android:textSize="18sp"

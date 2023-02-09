@@ -111,6 +111,10 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         return noteList == null ? 0 : noteList.size();
     }
 
+    public int getCountSelect() {
+        return countSelect;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTileNote;
         TextView tvContentNote;

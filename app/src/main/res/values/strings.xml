@@ -13,4 +13,7 @@
     <string name="toast_change_theme">Theme changes success.</string>
     <string name="toast_change_bg">Background changes success.</string>
     <string name="no_title">No Title.</string>
+    <string name="action_search">Search</string>
+    <string name="hide_txt_select">SELECT </string>
+    <string name="hide_txt_note"> NOTE</string>
 </resources>

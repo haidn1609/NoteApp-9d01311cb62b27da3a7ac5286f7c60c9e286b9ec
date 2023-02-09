@@ -45,6 +45,7 @@
     <color name="theme_gradient_purple_bot">#8125E2</color>
     <!--    text color-->
     <color name="text_title">#FFFFFFFF</color>
+    <color name="text_white">#FFFFFFFF</color>
     <color name="text_hide">#B25E5B5B</color>
     <color name="text_hide_white">#C4FFFFFF</color>
     <color name="text_black">#B2000000</color>
