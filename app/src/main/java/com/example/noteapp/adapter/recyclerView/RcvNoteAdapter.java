@@ -88,7 +88,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             }
         });
         holder.layoutNoteItem.setOnLongClickListener(v -> {
-            rcvNoteItemClick.setSelectMode(true);
+            rcvNoteItemClick.openSelectMode(countSelect==0);
             selectMode = true;
             if (note.isSelect()) {
                 holder.lottieAnimationView.setSpeed(-2);
