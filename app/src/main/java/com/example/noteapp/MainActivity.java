@@ -17,6 +17,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -79,19 +81,35 @@ public class MainActivity extends AppCompatActivity implements KEY {
         getListNote();
         //add event
         binding.iconSearch.setOnClickListener(v -> {
+            rcvNoteAdapter.getFilter().filter("");
+            binding.etSearchNote.setText("");
             setViewSearch();
             //changeKeyboardState();
         });
         binding.etSearchNote.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                switch (actionId){
+                switch (actionId) {
                     case EditorInfo.IME_ACTION_SEARCH:
-                        Log.d(TAG, "onEditorAction: "+v.getText().toString());
+                        rcvNoteAdapter.getFilter().filter(v.getText().toString());
                         v.setText("");
                         setViewSearch();
                 }
                 return false;
+            }
+        });
+        binding.etSearchNote.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                rcvNoteAdapter.getFilter().filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
         binding.iconBackMode.setOnClickListener(v -> {
@@ -111,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
         });
         binding.btnAddNote.setOnClickListener(v -> {
             binding.floatingMenuBt.collapse();
+            setViewSearch();
             Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
             itEditNote.putExtra(ACTION, ACTION_ADD);
             activityResultLauncher.launch(itEditNote);
@@ -164,17 +183,6 @@ public class MainActivity extends AppCompatActivity implements KEY {
             isSearch = true;
         }
 
-    }
-
-    private void changeKeyboardState() {
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
-            if (isSearch) {
-                inputMethodManager.showSoftInput(binding.etSearchNote, InputMethodManager.SHOW_FORCED);
-            } else {
-                inputMethodManager.hideSoftInputFromWindow(binding.etSearchNote.getWindowToken(), 0);
-            }
-        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")

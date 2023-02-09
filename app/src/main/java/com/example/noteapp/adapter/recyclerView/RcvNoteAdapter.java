@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,10 +23,12 @@ import com.example.noteapp.model.NoteModel;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHolder> {
+public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHolder> implements Filterable {
 
     private List<NoteModel> noteList;
+    private List<NoteModel> noteListOld;
     private RcvNoteItemClick rcvNoteItemClick;
     private Context mContext;
     private boolean selectMode = false;
@@ -32,6 +36,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
 
     public void setDataAdapter(List<NoteModel> datas, Context mcontext) {
         this.noteList = datas;
+        this.noteListOld = datas;
         this.mContext = mcontext;
         notifyDataSetChanged();
     }
@@ -123,5 +128,31 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             layoutNoteItem = itemView.findViewById(R.id.layout_item_note);
             lottieAnimationView = itemView.findViewById(R.id.lottie_checked);
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String strSearch = constraint.toString();
+                if (strSearch.isEmpty()) {
+                    noteList = noteListOld;
+                } else {
+                    noteList = noteListOld.stream().filter(noteModel -> noteModel.getTitle().toLowerCase().contains(strSearch.toLowerCase())
+                                    || noteModel.getContent().toLowerCase().contains(strSearch.toLowerCase()))
+                            .collect(Collectors.toList());
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = noteList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                noteList = (List<NoteModel>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }
