@@ -32,7 +32,7 @@ public class BackgroundSettingActivity extends AppCompatActivity implements KEY 
         rcvThemeAdapter = new RcvThemeAdapter();
         rcvBackgroundAdapter = new RcvBackgroundAdapter();
         initView();
-//      set event
+//      ↓set event
         rcvThemeAdapter.setRcvThemeItemClick(val -> {
             sp.edit().putString(APPBAR_COLOR, val + "").apply();
             Toast.makeText(BackgroundSettingActivity.this, getString(R.string.toast_change_theme), Toast.LENGTH_SHORT).show();
@@ -47,7 +47,7 @@ public class BackgroundSettingActivity extends AppCompatActivity implements KEY 
             finish();
         });
     }
-
+//    ↓ edit view
     private void initView() {
         List<Integer> listTheme = getListTheme();
         RecyclerView.LayoutManager layoutManagerTheme = new GridLayoutManager(this, 4, RecyclerView.VERTICAL, false);
@@ -58,7 +58,7 @@ public class BackgroundSettingActivity extends AppCompatActivity implements KEY 
         List<String> listBackground = getListBackGround();
         RecyclerView.LayoutManager layoutManagerBg = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
         binding.rcvListBackground.setLayoutManager(layoutManagerBg);
-        rcvBackgroundAdapter.setDataAdapter(listBackground,this);
+        rcvBackgroundAdapter.setDataAdapter(listBackground, this);
         binding.rcvListBackground.setAdapter(rcvBackgroundAdapter);
     }
 

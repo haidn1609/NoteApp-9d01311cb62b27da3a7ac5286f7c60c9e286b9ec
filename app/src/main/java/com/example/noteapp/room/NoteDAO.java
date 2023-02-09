@@ -23,15 +23,21 @@ public interface NoteDAO {
     @Update
     Completable update(NoteModel... noteModels);
 
+    @Query("update notes set status=:status where id in(:ids)")
+    Completable updateStatus(List<Long> ids, String status);
+
     @Delete
     Completable delete(NoteModel noteModels);
 
     @Query("delete from notes where id in (:ids)")
     Completable deleteListItem(List<Long> ids);
 
-    @Query("SELECT * FROM notes")
+    @Query("select * from notes")
     Single<List<NoteModel>> getAllNote();
 
-    @Query("SELECT * FROM notes WHERE id = :id")
+    @Query("select * from notes where status = :status")
+    Single<List<NoteModel>> getAllNoteByStatus(String status);
+
+    @Query("select * from notes WHERE id = :id")
     Single<NoteModel> getNoteById(Long id);
 }

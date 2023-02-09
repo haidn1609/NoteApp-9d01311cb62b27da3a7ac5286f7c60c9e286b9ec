@@ -47,29 +47,12 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         appDatabase = AppDatabase.getInstance(this);
         nowAction = getIntent().getStringExtra(ACTION);
         initView();
-        List<PowerMenuItem> menuItemList = new ArrayList<>();
-        menuItemList.add(new PowerMenuItem(getString(R.string.change_theme), false));
-        powerMenu = new PowerMenu.Builder(this)
-                .addItemList(menuItemList)
-                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
-                .setTextColor(getColor(R.color.text_black))
-                .setTextGravity(Gravity.CENTER)
-                .setSelectedTextColor(Color.WHITE)
-                .setMenuColor(Color.WHITE)
-                .setSelectedMenuColor(getColor(R.color.text_black))
-                .setOnMenuItemClickListener((position, item) -> {
-                    Log.d(TAG, "onItemClick: " + item.title);
-                    powerMenu.dismiss();
-                    openBtSheetTheme();
-                })
-                .build();
-        //set event
-        configurationRichEdit();
+        //  ↓set event
         binding.iconMenu.setOnClickListener(v -> powerMenu.showAsAnchorCenter(v));
         binding.iconBackEditNote.setOnClickListener(v -> {
             String title = getString(R.string.no_title);
             String content = "";
-            if (binding.etNoteTitle.getText().toString().equals("null")) {
+            if (!binding.etNoteTitle.getText().toString().trim().equalsIgnoreCase("")) {
                 title = binding.etNoteTitle.getText().toString();
             }
             if (binding.etNoteContent.getHtml() != null) {
@@ -84,6 +67,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         });
     }
 
+    //     ↓ edit view
     private void initView() {
         binding.etNoteContent.setEditorFontSize(18);
         binding.etNoteContent.setBackgroundColor(getColor(R.color.bg_opacity));
@@ -104,10 +88,11 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             binding.appBarEditNote.setBackgroundColor(getColor(noteModel.getColorTitle()));
             binding.editNoteLayout.setBackgroundColor(getColor(noteModel.getColorBackground()));
             setOptionNoteTheme(new OptionNoteTheme(noteModel.getColorBackground(), TYPE_COLOR, noteModel.getColorTitle(), TYPE_COLOR));
-        }else if(nowAction.equals(ACTION_ADD)){
+        } else if (nowAction.equals(ACTION_ADD)) {
             setOptionNoteTheme(new OptionNoteTheme(R.color.bg_note_blue, TYPE_COLOR, R.color.tt_note_blue, TYPE_COLOR));
-
         }
+        configurationRichEdit();
+        configurationPopupMenu();
     }
 
     private void configurationRichEdit() {
@@ -137,6 +122,24 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         binding.actionInsertCheckbock.setOnClickListener(v -> editor.insertTodo());
     }
 
+    private void configurationPopupMenu() {
+        List<PowerMenuItem> menuItemList = new ArrayList<>();
+        menuItemList.add(new PowerMenuItem(getString(R.string.change_theme), false));
+        powerMenu = new PowerMenu.Builder(this).addItemList(menuItemList).setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT).setTextColor(getColor(R.color.text_black)).setTextGravity(Gravity.CENTER).setSelectedTextColor(Color.WHITE).setMenuColor(Color.WHITE).setSelectedMenuColor(getColor(R.color.text_black)).setOnMenuItemClickListener((position, item) -> {
+            Log.d(TAG, "onItemClick: " + item.title);
+            powerMenu.dismiss();
+            openBtSheetTheme();
+        }).build();
+    }
+
+    private void openBtSheetTheme() {
+        List<OptionNoteTheme> listTheme = getListTheme();
+        BottomSheetThemeFragment btsThemeFragment = BottomSheetThemeFragment.newInstance(listTheme);
+        btsThemeFragment.show(getSupportFragmentManager(), btsThemeFragment.getTag());
+
+    }
+
+    //  ↓ room database
     private void addNoteItem(String title, String content, int bgColor, int ttColor) {
         NoteModel noteModel = new NoteModel();
         Calendar calendar = Calendar.getInstance();
@@ -145,26 +148,24 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         noteModel.setModifyDay(calendar.getTime());
         noteModel.setColorBackground(bgColor);
         noteModel.setColorTitle(ttColor);
+        noteModel.setStatus(STATUS_PUBLIC);
+        appDatabase.noteDAO().insert(noteModel).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+                mDisposable = d;
+            }
 
-        appDatabase.noteDAO().insert(noteModel).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-                        mDisposable = d;
-                    }
+            @Override
+            public void onComplete() {
+                setResult(RESULT_CODE_EDIT_NOTE, new Intent());
+                finish();
+            }
 
-                    @Override
-                    public void onComplete() {
-                        setResult(RESULT_CODE_EDIT_NOTE, new Intent());
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        Log.d(TAG, "onError: " + e);
-                    }
-                });
+            @Override
+            public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+        });
     }
 
     private void updateNoteItem(String title, String content, int bgColor, int ttColor) {
@@ -176,33 +177,25 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         noteModel.setColorTitle(ttColor);
         noteModel.setModifyDay(calendar.getTime());
 
-        appDatabase.noteDAO().update(noteModel).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new CompletableObserver() {
-                    @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                        mDisposable = d;
-                    }
+        appDatabase.noteDAO().update(noteModel).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                mDisposable = d;
+            }
 
-                    @Override
-                    public void onComplete() {
-                        setResult(RESULT_CODE_EDIT_NOTE, new Intent());
-                        finish();
-                    }
+            @Override
+            public void onComplete() {
+                setResult(RESULT_CODE_EDIT_NOTE, new Intent());
+                finish();
+            }
 
-                    @Override
-                    public void onError(@NonNull Throwable e) {
-                        Log.d(TAG, "onError: " + e);
-                    }
-                });
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d(TAG, "onError: " + e);
+            }
+        });
     }
 
-    private void openBtSheetTheme() {
-        List<OptionNoteTheme> listTheme = getListTheme();
-        BottomSheetThemeFragment btsThemeFragment = BottomSheetThemeFragment.newInstance(listTheme);
-        btsThemeFragment.show(getSupportFragmentManager(), btsThemeFragment.getTag());
-
-    }
 
     private List<OptionNoteTheme> getListTheme() {
         List<OptionNoteTheme> listTheme = new ArrayList<>();
@@ -226,11 +219,12 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             mDisposable.dispose();
         }
     }
-
+    //↓ communicate fragment
     public void setOptionNoteTheme(OptionNoteTheme optionNoteTheme) {
         this.optionNoteTheme = optionNoteTheme;
     }
-    public void setThemeNote(OptionNoteTheme optionNoteTheme){
+
+    public void setThemeNote(OptionNoteTheme optionNoteTheme) {
         setOptionNoteTheme(optionNoteTheme);
         binding.appBarEditNote.setBackgroundColor(getColor(optionNoteTheme.getTtValue()));
         binding.editNoteLayout.setBackgroundColor(getColor(optionNoteTheme.getBgValue()));

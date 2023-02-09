@@ -59,16 +59,12 @@ public class BottomSheetThemeFragment extends BottomSheetDialogFragment implemen
         btsDialog.setContentView(viewDialog);
 
         rcvListTheme = viewDialog.findViewById(R.id.rcv_bts_theme);
+        btnCancel = viewDialog.findViewById(R.id.btn_cancel_bts_theme);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rcvListTheme.setLayoutManager(layoutManager);
         rcvListTheme.setAdapter(rcvBtsThemeAdapter);
-        rcvBtsThemeAdapter.setRcvBtsItemClick(new RcvBtsItemClick() {
-            @Override
-            public void setTheme(OptionNoteTheme optionNoteTheme) {
-                editNoteActivity.setThemeNote(optionNoteTheme);
-            }
-        });
-        btnCancel = viewDialog.findViewById(R.id.btn_cancel_bts_theme);
+//        ↓set event
+        rcvBtsThemeAdapter.setRcvBtsItemClick(optionNoteTheme -> editNoteActivity.setThemeNote(optionNoteTheme));
         btnCancel.setOnClickListener(v -> btsDialog.dismiss());
         return btsDialog;
     }

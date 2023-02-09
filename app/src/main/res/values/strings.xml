@@ -16,4 +16,7 @@
     <string name="action_search">Search</string>
     <string name="hide_txt_select">SELECT </string>
     <string name="hide_txt_note"> NOTE</string>
+    <string name="view_grid"> View by grid</string>
+    <string name="view_list"> View by list</string>
+    <string name="backup"> Backup Note</string>
 </resources>

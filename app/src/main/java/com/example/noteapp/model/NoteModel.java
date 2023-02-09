@@ -15,13 +15,10 @@ public class NoteModel implements Serializable {
     private Long id;
     private String title;
     private String content;
-
     private int colorBackground;
-
     private int colorTitle;
-
     private boolean isSelect;
-
+    private String status;
     @TypeConverters(DateConverter.class)
     private Date modifyDay;
 
@@ -79,20 +76,14 @@ public class NoteModel implements Serializable {
     }
 
     public void setSelect(boolean select) {
-        isSelect = select;
-
+        this.isSelect = select;
     }
 
-    @Override
-    public String toString() {
-        return "NoteModel{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", colorBackground=" + colorBackground +
-                ", colorTitle=" + colorTitle +
-                ", isSelect=" + isSelect +
-                ", modifyDay=" + modifyDay +
-                '}';
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

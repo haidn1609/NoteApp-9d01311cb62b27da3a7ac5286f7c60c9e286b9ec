@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
@@ -18,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -35,6 +38,9 @@ import com.example.noteapp.adapter.recyclerView.RcvNoteItemClick;
 import com.example.noteapp.databinding.ActivityMainBinding;
 import com.example.noteapp.model.NoteModel;
 import com.example.noteapp.room.AppDatabase;
+import com.skydoves.powermenu.MenuAnimation;
+import com.skydoves.powermenu.PowerMenu;
+import com.skydoves.powermenu.PowerMenuItem;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -54,7 +60,12 @@ public class MainActivity extends AppCompatActivity implements KEY {
     private Disposable mDisposable;
     private List<NoteModel> noteModelList;
     private AppDatabase appDatabase;
+    private SharedPreferences sp;
+    private PowerMenu powerMenu;
+    private RecyclerView.LayoutManager lmNoteList;
+    private RecyclerView.LayoutManager lmNoteGrid;
     private boolean isShowSearch = false;
+
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         switch (result.getResultCode()) {
             case RESULT_CODE_BACKGROUND_SETTING: {
@@ -75,23 +86,26 @@ public class MainActivity extends AppCompatActivity implements KEY {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         appDatabase = AppDatabase.getInstance(this);
+        lmNoteGrid = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
+        lmNoteList = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        sp = getBaseContext().getSharedPreferences(SP_BACKGROUND_SETTING, MODE_PRIVATE);
         rcvNoteAdapter = new RcvNoteAdapter();
         noteModelList = new ArrayList<>();
         initView();
-
-        //add event
+        //↓ set event
+        binding.iconMenu.setOnClickListener(v -> powerMenu.showAsAnchorCenter(v));
         binding.iconSearch.setOnClickListener(v -> {
             showSearchBar(!isShowSearch);
             binding.etSearchNote.setText("");
             if (isShowSearch) {
-                showKeyboard();
+                setKeyboard();
             }
             isShowSearch = !isShowSearch;
         });
         binding.etSearchNote.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 rcvNoteAdapter.getFilter().filter(binding.etSearchNote.getText().toString());
-                showKeyboard();
+                setKeyboard();
                 return true;
             }
             return false;
@@ -113,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements KEY {
         binding.iconBackMode.setOnClickListener(v -> getListNote());
         binding.iconDelete.setOnClickListener(v -> {
             if (rcvNoteAdapter.getCountSelect() > 0) {
-                List<Long> filter = noteModelList.stream().filter(NoteModel::isSelect).map(NoteModel::getId).collect(Collectors.toList());
+                List<Long> filter = noteModelList.stream()
+                        .filter(NoteModel::isSelect)
+                        .map(NoteModel::getId)
+                        .collect(Collectors.toList());
                 deleteMultiNote(filter);
             }
         });
@@ -135,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
 
             @Override
             public void openSelectMode(boolean isOpen) {
-                if (isOpen&& isShowSearch) showKeyboard();
+                if (isOpen && isShowSearch) setKeyboard();
                 showSelectBar(true);
                 showSearchBar(false);
             }
@@ -161,10 +178,10 @@ public class MainActivity extends AppCompatActivity implements KEY {
         });
     }
 
+    //    ↓ edit view
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initView() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        SharedPreferences sp = getBaseContext().getSharedPreferences(SP_BACKGROUND_SETTING, MODE_PRIVATE);
         Picasso.get().load(sp.getString(BACKGROUND_COLOR, BLANK_BG)).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -181,11 +198,43 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 Log.d(TAG, "onPrepareLoad: ");
             }
         });
+        configurationPopupMenu();
         binding.appBar.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
-        binding.rcvListNote.setLayoutManager(layoutManager);
+        if (sp.getString(VIEW_TYPE, VIEW_GRID).equals(VIEW_GRID)) {
+            binding.rcvListNote.setLayoutManager(lmNoteGrid);
+        } else binding.rcvListNote.setLayoutManager(lmNoteList);
         binding.rcvListNote.setAdapter(rcvNoteAdapter);
         getListNote();
+    }
+
+    private void configurationPopupMenu() {
+        List<PowerMenuItem> menuItemList = new ArrayList<>();
+        menuItemList.add(new PowerMenuItem(getString(R.string.view_grid), false));
+        powerMenu = new PowerMenu.Builder(this)
+                .addItemList(menuItemList)
+                .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                .setTextColor(getColor(R.color.text_black))
+                .setTextGravity(Gravity.CENTER)
+                .setSelectedTextColor(Color.WHITE)
+                .setMenuColor(Color.WHITE)
+                .setSelectedMenuColor(getColor(R.color.text_black))
+                .setOnMenuItemClickListener((position, item) -> {
+                    switch (position) {
+                        case 0:
+                            assert item.title != null;
+                            item.title = getString(item.title.equals(getString(R.string.view_list)) ? R.string.view_grid : R.string.view_list);
+                            if (item.title.equals(getString(R.string.view_grid))) {
+                                sp.edit().putString(VIEW_TYPE, VIEW_GRID).apply();
+                                binding.rcvListNote.setLayoutManager(lmNoteGrid);
+                            } else {
+                                sp.edit().putString(VIEW_TYPE, VIEW_LIST).apply();
+                                binding.rcvListNote.setLayoutManager(lmNoteList);
+                            }
+                            break;
+                    }
+
+                    powerMenu.dismiss();
+                }).build();
     }
 
     private void showBtnMenu(ActivityMainBinding binding, boolean show) {
@@ -214,20 +263,21 @@ public class MainActivity extends AppCompatActivity implements KEY {
         if (isShowSearch) {
             Log.d(TAG, "showSearchBar: open");
             binding.etSearchNote.requestFocus();
-            showKeyboard();
+            setKeyboard();
             binding.etSearchNote.clearFocus();
         }
     }
 
-    public void showKeyboard() {
+    public void setKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
+    //    ↓ room database
     private void getListNote() {
         showSelectBar(false);
         showSearchBar(false);
-        appDatabase.noteDAO().getAllNote().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<List<NoteModel>>() {
+        appDatabase.noteDAO().getAllNoteByStatus(STATUS_PUBLIC).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<List<NoteModel>>() {
             @Override
             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
                 mDisposable = d;
@@ -279,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
     }
 
     private void deleteMultiNote(List<Long> ids) {
-        appDatabase.noteDAO().deleteListItem(ids).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
+        appDatabase.noteDAO().updateStatus(ids,STATUS_PRIVATE).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
                 mDisposable = d;
