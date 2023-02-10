@@ -19,4 +19,9 @@
     <string name="view_grid"> View by grid</string>
     <string name="view_list"> View by list</string>
     <string name="backup"> Backup Note</string>
+    <string name="dial_delete_title"> Delete Note</string>
+    <string name="dial_delete_mess1"> Do you want delete this note?</string>
+    <string name="dial_delete_mess2"> Do you want delete all notes?</string>
+    <string name="dial_btn_cancel"> Cancel</string>
+    <string name="dial_btn_delete"> Delete</string>
 </resources>

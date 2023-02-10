@@ -1,8 +1,6 @@
 package com.example.noteapp;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-import static com.example.noteapp.KEY.STATUS_PRIVATE;
-import static com.example.noteapp.KEY.STATUS_PUBLIC;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -19,6 +17,7 @@ import com.example.noteapp.adapter.recyclerView.RcvBackupNoteAdapter;
 import com.example.noteapp.adapter.recyclerView.RcvBackupNoteClick;
 import com.example.noteapp.databinding.ActivityBackupNoteBinding;
 import com.example.noteapp.model.NoteModel;
+import com.example.noteapp.modul.DialogController;
 import com.example.noteapp.room.AppDatabase;
 
 import java.util.ArrayList;
@@ -37,12 +36,13 @@ public class BackupNoteActivity extends AppCompatActivity implements KEY {
     private AppDatabase appDatabase;
     private Disposable mDisposable;
     private List<NoteModel> noteModelList;
-
+    private DialogController dialogController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_backup_note);
         appDatabase = AppDatabase.getInstance(this);
+        dialogController = new DialogController(this);
         rcvBackupNoteAdapter = new RcvBackupNoteAdapter();
         noteModelList = new ArrayList<>();
         initView();
@@ -59,7 +59,7 @@ public class BackupNoteActivity extends AppCompatActivity implements KEY {
         });
         binding.iconDelete.setOnClickListener(v -> {
             if (rcvBackupNoteAdapter.getCountSelect() > 0) {
-                deleteMultiNote(getListSelect());
+                dialogController.openDialogDelete(rcvBackupNoteAdapter.getCountSelect(), noteModelList);
             }
         });
         rcvBackupNoteAdapter.setRcvBackupNoteClick(new RcvBackupNoteClick() {
@@ -79,6 +79,7 @@ public class BackupNoteActivity extends AppCompatActivity implements KEY {
                 binding.txtCountSelect.setText(getString(R.string.hide_txt_select) + " " + count + " " + getString(R.string.hide_txt_note));
             }
         });
+        dialogController.setDialogOnEventListener(this::deleteMultiNote);
     }
 
     //    ↓ set vỉew

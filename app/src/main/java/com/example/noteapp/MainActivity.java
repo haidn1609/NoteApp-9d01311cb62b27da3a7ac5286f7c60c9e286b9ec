@@ -37,6 +37,7 @@ import com.example.noteapp.adapter.recyclerView.RcvNoteAdapter;
 import com.example.noteapp.adapter.recyclerView.RcvNoteItemClick;
 import com.example.noteapp.databinding.ActivityMainBinding;
 import com.example.noteapp.model.NoteModel;
+import com.example.noteapp.modul.DialogController;
 import com.example.noteapp.room.AppDatabase;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
@@ -46,7 +47,6 @@ import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.CompletableObserver;
@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
     private PowerMenu powerMenu;
     private RecyclerView.LayoutManager lmNoteList;
     private RecyclerView.LayoutManager lmNoteGrid;
+    private DialogController dialogController;
     private boolean isShowSearch = false;
 
     ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
         lmNoteGrid = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
         lmNoteList = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         sp = getBaseContext().getSharedPreferences(SP_BACKGROUND_SETTING, MODE_PRIVATE);
+        dialogController = new DialogController(this);
         rcvNoteAdapter = new RcvNoteAdapter();
         noteModelList = new ArrayList<>();
         initView();
@@ -127,11 +129,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
         binding.iconBackMode.setOnClickListener(v -> getListNote());
         binding.iconDelete.setOnClickListener(v -> {
             if (rcvNoteAdapter.getCountSelect() > 0) {
-                List<Long> filter = noteModelList.stream()
-                        .filter(NoteModel::isSelect)
-                        .map(NoteModel::getId)
-                        .collect(Collectors.toList());
-                deleteMultiNote(filter);
+                dialogController.openDialogDelete(rcvNoteAdapter.getCountSelect(), noteModelList);
             }
         });
         binding.iconSetting.setOnClickListener(v -> {
@@ -169,13 +167,14 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy > 0) {
                     binding.floatingMenuBt.collapse();
-                    showBtnMenu(binding, false);
+                    showBtnMenu(false);
                 } else {
                     binding.floatingMenuBt.collapse();
-                    showBtnMenu(binding, true);
+                    showBtnMenu(true);
                 }
             }
         });
+        dialogController.setDialogOnEventListener(this::deleteMultiNote);
     }
 
     //    ↓ edit view
@@ -243,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 }).build();
     }
 
-    private void showBtnMenu(ActivityMainBinding binding, boolean show) {
+    private void showBtnMenu(boolean show) {
         Transition transitionIn = new Fade();
         transitionIn.setDuration(1000);
         transitionIn.addTarget(R.id.floating_menu_bt);
@@ -279,9 +278,6 @@ public class MainActivity extends AppCompatActivity implements KEY {
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
-    private void openDialogDelete(){
-
-    }
     //    ↓ room database
     private void getListNote() {
         showSelectBar(false);

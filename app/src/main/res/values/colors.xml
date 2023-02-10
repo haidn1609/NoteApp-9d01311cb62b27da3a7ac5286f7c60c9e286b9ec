@@ -49,6 +49,7 @@
     <color name="text_hide">#B25E5B5B</color>
     <color name="text_hide_white">#C4FFFFFF</color>
     <color name="text_black">#B2000000</color>
+    <color name="text_blue">#20B5C9</color>
     <!--    icon color-->
     <color name="icon_white">#FFFFFFFF</color>
     <!--    menu color-->
@@ -56,4 +57,7 @@
     <color name="bg_rich_edit">#B2A0A0A0</color>
     <!--    stroke-->
     <color name="stk_line_grey">#D7CFCFCF</color>
+    <!--    button-->
+    <color name="btn_delete">#E84C3D</color>
+    <color name="btn_cancel">#00FFFFFF</color>
 </resources>
