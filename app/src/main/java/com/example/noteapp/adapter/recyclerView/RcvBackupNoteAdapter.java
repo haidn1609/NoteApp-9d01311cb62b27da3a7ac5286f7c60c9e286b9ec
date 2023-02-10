@@ -6,9 +6,6 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,26 +18,23 @@ import com.example.noteapp.model.NoteModel;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHolder> implements Filterable {
-
-    private List<NoteModel> noteList;
-    private List<NoteModel> noteListOld;
-    private RcvNoteItemClick rcvNoteItemClick;
+public class RcvBackupNoteAdapter extends RecyclerView.Adapter<RcvBackupNoteAdapter.ViewHolder> {
+    private List<NoteModel> noteModelList;
     private Context mContext;
+    private RcvBackupNoteClick rcvBackupNoteClick;
     private boolean selectMode = false;
     private int countSelect = 0;
 
-    public void setDataAdapter(List<NoteModel> datas, Context mcontext) {
-        this.noteList = datas;
-        this.noteListOld = datas;
-        this.mContext = mcontext;
+    @SuppressLint("NotifyDataSetChanged")
+    public void setDataAdapter(List<NoteModel> noteModelList, Context mContext) {
+        this.noteModelList = noteModelList;
+        this.mContext = mContext;
         notifyDataSetChanged();
     }
 
-    public void setOnClickItem(RcvNoteItemClick rcvNoteItemClick) {
-        this.rcvNoteItemClick = rcvNoteItemClick;
+    public void setRcvBackupNoteClick(RcvBackupNoteClick rcvBackupNoteClick) {
+        this.rcvBackupNoteClick = rcvBackupNoteClick;
     }
 
     public void setSelectMode(boolean selectMode, int countSelect) {
@@ -48,17 +42,19 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         this.countSelect = countSelect;
     }
 
+    public int getCountSelect() {
+        return countSelect;
+    }
+
     @NonNull
     @Override
-    public RcvNoteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.rcv_item_note, parent, false);
-        return new ViewHolder(view);
+    public RcvBackupNoteAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.rcv_item_note, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RcvNoteAdapter.ViewHolder holder, int position) {
-        NoteModel note = noteList.get(position);
+    public void onBindViewHolder(@NonNull RcvBackupNoteAdapter.ViewHolder holder, int position) {
+        NoteModel note = noteModelList.get(position);
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat formatDay = new SimpleDateFormat("dd/MM/yyyy");
         holder.noteTile.setBackgroundColor(mContext.getColor(note.getColorTitle()));
@@ -66,19 +62,19 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         holder.tvTileNote.setText(note.getTitle());
         holder.tvContentNote.setText(Html.fromHtml(note.getContent(), Html.FROM_HTML_MODE_COMPACT));
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
-
+//        ↓set event
         holder.layoutNoteItem.setOnClickListener(v -> {
             if (!selectMode) {
-                rcvNoteItemClick.editItemClick(note);
+                rcvBackupNoteClick.viewNote(note.getId());
             } else {
                 if (note.isSelect()) {
                     countSelect--;
-                    rcvNoteItemClick.setCountSelect(countSelect);
+                    rcvBackupNoteClick.setCountSelect(countSelect);
                     holder.lottieAnimationView.setSpeed(-2);
                     note.setSelect(false);
                 } else {
                     countSelect++;
-                    rcvNoteItemClick.setCountSelect(countSelect);
+                    rcvBackupNoteClick.setCountSelect(countSelect);
                     holder.lottieAnimationView.setSpeed(1);
                     note.setSelect(true);
                 }
@@ -86,16 +82,16 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             }
         });
         holder.layoutNoteItem.setOnLongClickListener(v -> {
-            rcvNoteItemClick.openSelectMode(countSelect==0);
+            rcvBackupNoteClick.openSelectMode(countSelect == 0);
             selectMode = true;
             if (note.isSelect()) {
                 holder.lottieAnimationView.setSpeed(-2);
                 countSelect--;
-                rcvNoteItemClick.setCountSelect(countSelect);
+                rcvBackupNoteClick.setCountSelect(countSelect);
                 note.setSelect(false);
             } else {
                 countSelect++;
-                rcvNoteItemClick.setCountSelect(countSelect);
+                rcvBackupNoteClick.setCountSelect(countSelect);
                 holder.lottieAnimationView.setSpeed(1);
                 note.setSelect(true);
             }
@@ -106,14 +102,10 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return noteList == null ? 0 : noteList.size();
+        return noteModelList.size();
     }
 
-    public int getCountSelect() {
-        return countSelect;
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTileNote;
         TextView tvContentNote;
         TextView tvModifyDateNote;
@@ -130,31 +122,5 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             layoutNoteItem = itemView.findViewById(R.id.layout_item_note);
             lottieAnimationView = itemView.findViewById(R.id.lottie_checked);
         }
-    }
-
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                String strSearch = constraint.toString();
-                if (strSearch.isEmpty()) {
-                    noteList = noteListOld;
-                } else {
-                    noteList = noteListOld.stream().filter(noteModel -> noteModel.getTitle().toLowerCase().contains(strSearch.toLowerCase())
-                                    || noteModel.getContent().toLowerCase().contains(strSearch.toLowerCase()))
-                            .collect(Collectors.toList());
-                }
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = noteList;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                noteList = (List<NoteModel>) results.values;
-                notifyDataSetChanged();
-            }
-        };
     }
 }

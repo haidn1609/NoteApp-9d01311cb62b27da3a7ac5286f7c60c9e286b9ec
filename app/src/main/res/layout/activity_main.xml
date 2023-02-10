@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
-        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/bg_white">
@@ -114,24 +113,15 @@
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/main_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/app_bar"
-            android:layout_marginTop="10dp">
-
-            <TextView
-                android:id="@+id/text_not_note"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/not_note"
-                android:textColor="@color/text_hide"
-                android:textSize="15sp"
-                android:textStyle="bold" />
+            android:layout_below="@+id/app_bar">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView

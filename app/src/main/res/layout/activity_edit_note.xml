@@ -34,6 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
                 android:hint="@string/hide_et_title"
+                android:inputType="text"
                 android:textColor="@color/text_title"
                 android:textColorHint="@color/text_hide_white"
                 android:textSize="18sp"

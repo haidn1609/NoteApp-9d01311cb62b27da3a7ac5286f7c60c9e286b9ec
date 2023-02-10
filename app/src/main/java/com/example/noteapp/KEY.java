@@ -11,6 +11,7 @@ public interface KEY {
     String ACTION = "ACTION";
     String ACTION_ADD = "ACTION_ADD";
     String ACTION_EDIT = "ACTION_EDIT";
+    String ACTION_VIEW = "ACTION_VIEW";
     String NOTE = "NOTE";
     String BTS_THEME = "BTS_THEME";
     String TYPE_COLOR = "COLOR";

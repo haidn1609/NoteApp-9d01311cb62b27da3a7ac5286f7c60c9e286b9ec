@@ -86,4 +86,15 @@ public class NoteModel implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "NoteModel{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", isSelect=" + isSelect +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

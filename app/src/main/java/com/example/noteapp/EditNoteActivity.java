@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -60,10 +61,9 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             }
             if (nowAction.equals(ACTION_ADD)) {
                 addNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
-            } else {
+            } else if (nowAction.equals(ACTION_EDIT)) {
                 updateNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
-            }
-
+            } else if (nowAction.equals(ACTION_VIEW)) finish();
         });
     }
 
@@ -81,7 +81,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         binding.actionInsertVideo.setVisibility(View.GONE);
         binding.actionInsertLink.setVisibility(View.GONE);
         //
-        if (nowAction.equals(ACTION_EDIT)) {
+        if (nowAction.equals(ACTION_EDIT) || nowAction.equals(ACTION_VIEW)) {
             NoteModel noteModel = (NoteModel) getIntent().getExtras().get(NOTE);
             binding.etNoteTitle.setText(noteModel.getTitle());
             binding.etNoteContent.setHtml(noteModel.getContent());
@@ -90,6 +90,12 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             setOptionNoteTheme(new OptionNoteTheme(noteModel.getColorBackground(), TYPE_COLOR, noteModel.getColorTitle(), TYPE_COLOR));
         } else if (nowAction.equals(ACTION_ADD)) {
             setOptionNoteTheme(new OptionNoteTheme(R.color.bg_note_blue, TYPE_COLOR, R.color.tt_note_blue, TYPE_COLOR));
+        }
+        if (nowAction.equals(ACTION_VIEW)) {
+            binding.etNoteTitle.setEnabled(false);
+            binding.etNoteContent.setEnabled(false);
+            binding.iconMenu.setVisibility(View.GONE);
+            binding.richEdittorBar.setVisibility(View.GONE);
         }
         configurationRichEdit();
         configurationPopupMenu();
@@ -219,6 +225,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             mDisposable.dispose();
         }
     }
+
     //↓ communicate fragment
     public void setOptionNoteTheme(OptionNoteTheme optionNoteTheme) {
         this.optionNoteTheme = optionNoteTheme;

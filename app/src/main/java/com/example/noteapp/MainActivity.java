@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements KEY {
         });
         configurationPopupMenu();
         binding.appBar.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
+        binding.appBarSelect.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
+
         if (sp.getString(VIEW_TYPE, VIEW_GRID).equals(VIEW_GRID)) {
             binding.rcvListNote.setLayoutManager(lmNoteGrid);
         } else binding.rcvListNote.setLayoutManager(lmNoteList);
@@ -210,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
     private void configurationPopupMenu() {
         List<PowerMenuItem> menuItemList = new ArrayList<>();
         menuItemList.add(new PowerMenuItem(getString(R.string.view_grid), false));
+        menuItemList.add(new PowerMenuItem(getString(R.string.backup), false));
         powerMenu = new PowerMenu.Builder(this)
                 .addItemList(menuItemList)
                 .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
@@ -231,8 +234,11 @@ public class MainActivity extends AppCompatActivity implements KEY {
                                 binding.rcvListNote.setLayoutManager(lmNoteList);
                             }
                             break;
+                        case 1:
+                            Intent itBackUpNote = new Intent(MainActivity.this, BackupNoteActivity.class);
+                            activityResultLauncher.launch(itBackUpNote);
+                            break;
                     }
-
                     powerMenu.dismiss();
                 }).build();
     }
@@ -268,11 +274,14 @@ public class MainActivity extends AppCompatActivity implements KEY {
         }
     }
 
-    public void setKeyboard() {
+    private void setKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getBaseContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
+    private void openDialogDelete(){
+
+    }
     //    ↓ room database
     private void getListNote() {
         showSelectBar(false);
@@ -286,15 +295,8 @@ public class MainActivity extends AppCompatActivity implements KEY {
             @Override
             public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull List<NoteModel> noteModels) {
                 noteModelList = noteModels;
-                if (noteModelList.size() > 0) {
-                    binding.textNotNote.setVisibility(View.GONE);
-                    binding.rcvListNote.setVisibility(View.VISIBLE);
-                    rcvNoteAdapter.setDataAdapter(noteModelList, MainActivity.this);
-                    binding.rcvListNote.setAdapter(rcvNoteAdapter);
-                } else {
-                    binding.textNotNote.setVisibility(View.VISIBLE);
-                    binding.rcvListNote.setVisibility(View.GONE);
-                }
+                rcvNoteAdapter.setDataAdapter(noteModelList, MainActivity.this);
+                binding.rcvListNote.setAdapter(rcvNoteAdapter);
             }
 
             @Override
@@ -329,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
     }
 
     private void deleteMultiNote(List<Long> ids) {
-        appDatabase.noteDAO().updateStatus(ids,STATUS_PRIVATE).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
+        appDatabase.noteDAO().updateStatus(ids, STATUS_PRIVATE).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
                 mDisposable = d;
