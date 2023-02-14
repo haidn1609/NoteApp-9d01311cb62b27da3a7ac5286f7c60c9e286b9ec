@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
             binding.floatingMenuBt.collapse();
             Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
             itEditNote.putExtra(ACTION, ACTION_ADD);
+            itEditNote.putExtra(NOTE_TYPE, NOTE_TYPE_TEXT);
             activityResultLauncher.launch(itEditNote);
         });
         rcvNoteAdapter.setOnClickItem(new RcvNoteItemClick() {

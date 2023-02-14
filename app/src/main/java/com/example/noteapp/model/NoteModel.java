@@ -5,11 +5,14 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.example.noteapp.KEY;
+
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 @Entity(tableName = "notes")
-public class NoteModel implements Serializable {
+public class NoteModel implements Serializable, KEY {
     @PrimaryKey
     @NonNull
     private Long id;
@@ -19,6 +22,15 @@ public class NoteModel implements Serializable {
     private int colorTitle;
     private boolean isSelect;
     private String status;
+    private String type;
+
+    public NoteModel() {
+        Calendar calendar = Calendar.getInstance();
+        this.status = STATUS_PUBLIC;
+        this.isSelect = false;
+        this.modifyDay = calendar.getTime();
+    }
+
     @TypeConverters(DateConverter.class)
     private Date modifyDay;
 
@@ -85,6 +97,14 @@ public class NoteModel implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

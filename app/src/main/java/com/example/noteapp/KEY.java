@@ -13,6 +13,10 @@ public interface KEY {
     String ACTION_EDIT = "ACTION_EDIT";
     String ACTION_VIEW = "ACTION_VIEW";
     String NOTE = "NOTE";
+    String NOTE_CONTENT = "NOTE_CONTENT";
+    String NOTE_TYPE = "NOTE_TYPE";
+    String NOTE_TYPE_TEXT = "NOTE_TYPE_TEXT";
+    String NOTE_TYPE_LIST = "NOTE_TYPE_LIST";
     String BTS_THEME = "BTS_THEME";
     String TYPE_COLOR = "COLOR";
     String TYPE_IMG = "IMAGE";

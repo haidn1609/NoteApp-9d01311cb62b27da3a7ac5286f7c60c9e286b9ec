@@ -5,7 +5,8 @@
     <string name="background">Ảnh Nền</string>
     <string name="theme">Theme</string>
     <string name="change_theme">Đổi Theme</string>
-    <string name="create_new">Tạo Ghi Chú Mới</string>
+    <string name="create_new_note_text">Tạo Ghi Chú Mới</string>
+    <string name="create_new_note_list">Tạo Danh Sách Mới</string>
     <string name="delete">Xóa Ghi Chú</string>
     <string name="not_note">Hiện chưa có ghi chú nào.</string>
     <string name="hide_et_title">Title...</string>

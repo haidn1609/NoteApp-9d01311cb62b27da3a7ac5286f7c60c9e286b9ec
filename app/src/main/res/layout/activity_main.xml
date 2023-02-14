@@ -157,7 +157,17 @@
                     app:fab_addButtonSize="mini"
                     app:fab_icon="@drawable/icon_note"
                     app:fab_size="mini"
-                    app:fab_title="@string/create_new"
+                    app:fab_title="@string/create_new_note_text"
+                    app:rippleColor="@color/black" />
+
+                <com.getbase.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btn_add_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:fab_addButtonSize="mini"
+                    app:fab_icon="@drawable/icon_list"
+                    app:fab_size="mini"
+                    app:fab_title="@string/create_new_note_list"
                     app:rippleColor="@color/black" />
             </com.getbase.floatingactionbutton.FloatingActionsMenu>
         </FrameLayout>
