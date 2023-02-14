@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DialogController {
-    private Context mContext;
+    private final Context mContext;
     private DialogOnEventListener dialogOnEventListener;
     public DialogController(Context mContext) {
         this.mContext = mContext;

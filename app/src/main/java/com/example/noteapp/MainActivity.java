@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
@@ -18,10 +19,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,6 +28,7 @@ import android.util.Log;
 
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -39,11 +39,11 @@ import com.example.noteapp.databinding.ActivityMainBinding;
 import com.example.noteapp.model.NoteModel;
 import com.example.noteapp.modul.DialogController;
 import com.example.noteapp.room.AppDatabase;
+import com.skydoves.powermenu.CircularEffect;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
         noteModelList = new ArrayList<>();
         initView();
         //↓ set event
-        binding.iconMenu.setOnClickListener(v -> powerMenu.showAsAnchorCenter(v));
+        binding.iconMenu.setOnClickListener(v -> powerMenu.showAsAnchorLeftBottom(v));
         binding.iconSearch.setOnClickListener(v -> {
             showSearchBar(!isShowSearch);
             binding.etSearchNote.setText("");
@@ -181,25 +181,14 @@ public class MainActivity extends AppCompatActivity implements KEY {
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initView() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        Picasso.get().load(sp.getString(BACKGROUND_COLOR, BLANK_BG)).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                binding.mainLayout.setBackground(new BitmapDrawable(getBaseContext().getResources(), bitmap));
-            }
-
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                Log.d(TAG, "onBitmapFailed: ");
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                Log.d(TAG, "onPrepareLoad: ");
-            }
-        });
+        Picasso.get().load(sp.getString(BACKGROUND_COLOR, BLANK_BG)).into(binding.imgBgMain);
         configurationPopupMenu();
         binding.appBar.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
         binding.appBarSelect.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
 
         if (sp.getString(VIEW_TYPE, VIEW_GRID).equals(VIEW_GRID)) {
             binding.rcvListNote.setLayoutManager(lmNoteGrid);
@@ -208,15 +197,20 @@ public class MainActivity extends AppCompatActivity implements KEY {
         getListNote();
     }
 
+    @SuppressLint("RtlHardcoded")
     private void configurationPopupMenu() {
         List<PowerMenuItem> menuItemList = new ArrayList<>();
-        menuItemList.add(new PowerMenuItem(getString(R.string.view_grid), false));
-        menuItemList.add(new PowerMenuItem(getString(R.string.backup), false));
+        if (sp.getString(VIEW_TYPE, VIEW_GRID).equals(VIEW_GRID)) {
+            menuItemList.add(new PowerMenuItem(getString(R.string.view_list), false));
+        } else menuItemList.add(new PowerMenuItem(getString(R.string.view_grid), false));
+        menuItemList.add(new PowerMenuItem(getString(R.string.trash), false));
+        menuItemList.add(new PowerMenuItem(getString(R.string.change_theme), false));
         powerMenu = new PowerMenu.Builder(this)
                 .addItemList(menuItemList)
                 .setAnimation(MenuAnimation.SHOWUP_TOP_RIGHT)
+                .setCircularEffect(CircularEffect.BODY)
                 .setTextColor(getColor(R.color.text_black))
-                .setTextGravity(Gravity.CENTER)
+                .setTextGravity(Gravity.LEFT)
                 .setSelectedTextColor(Color.WHITE)
                 .setMenuColor(Color.WHITE)
                 .setSelectedMenuColor(getColor(R.color.text_black))
@@ -224,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements KEY {
                     switch (position) {
                         case 0:
                             assert item.title != null;
-                            item.title = getString(item.title.equals(getString(R.string.view_list)) ? R.string.view_grid : R.string.view_list);
                             if (item.title.equals(getString(R.string.view_grid))) {
                                 sp.edit().putString(VIEW_TYPE, VIEW_GRID).apply();
                                 binding.rcvListNote.setLayoutManager(lmNoteGrid);
@@ -232,11 +225,16 @@ public class MainActivity extends AppCompatActivity implements KEY {
                                 sp.edit().putString(VIEW_TYPE, VIEW_LIST).apply();
                                 binding.rcvListNote.setLayoutManager(lmNoteList);
                             }
+                            item.title = getString(item.title.equals(getString(R.string.view_list)) ? R.string.view_grid : R.string.view_list);
                             break;
                         case 1:
                             Intent itBackUpNote = new Intent(MainActivity.this, BackupNoteActivity.class);
                             activityResultLauncher.launch(itBackUpNote);
                             break;
+                        case 2:
+                            Intent itBackgroundSetting = new Intent(MainActivity.this, BackgroundSettingActivity.class);
+                            activityResultLauncher.launch(itBackgroundSetting);
+
                     }
                     powerMenu.dismiss();
                 }).build();

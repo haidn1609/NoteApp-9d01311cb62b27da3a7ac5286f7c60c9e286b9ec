@@ -63,7 +63,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         SimpleDateFormat formatDay = new SimpleDateFormat("dd/MM/yyyy");
         holder.noteTile.setBackgroundColor(mContext.getColor(note.getColorTitle()));
         holder.layoutNoteItem.setBackgroundTintList(mContext.getColorStateList(note.getColorBackground()));
-        holder.tvTileNote.setText(note.getTitle());
+        holder.tvTileNote.setText(note.getTitle().trim().equals("") ? mContext.getString(R.string.no_title) : note.getTitle());
         holder.tvContentNote.setText(Html.fromHtml(note.getContent(), Html.FROM_HTML_MODE_COMPACT));
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
 
@@ -86,7 +86,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             }
         });
         holder.layoutNoteItem.setOnLongClickListener(v -> {
-            rcvNoteItemClick.openSelectMode(countSelect==0);
+            rcvNoteItemClick.openSelectMode(countSelect == 0);
             selectMode = true;
             if (note.isSelect()) {
                 holder.lottieAnimationView.setSpeed(-2);

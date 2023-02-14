@@ -86,6 +86,12 @@ public class BackgroundSettingActivity extends AppCompatActivity implements KEY 
         listBackground.add("https://luv.vn/wp-content/uploads/2021/09/hinh-nen-dien-thoai-dep-30.jpg");
         listBackground.add("https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/05/hinh-nen-cute-dien-thoai-desktop-10-696x1237.jpg?fit=700%2C20000&quality=95&ssl=1");
         listBackground.add("https://toanthaydinh.com/wp-content/uploads/2020/04/hinh-nen-dien-thoai-phong-canh-thien-nhien-cuc-dep-chat-luong-hd-25-576x1024-2.jpg");
+        listBackground.add("https://haycafe.vn/wp-content/uploads/2022/01/Hinh-nen-toi-cho-dien-thoai-dep-nhat.jpg");
+        listBackground.add("https://img.lovepik.com/background/20211030/medium/lovepik-star-mobile-wallpaper-background-image_400376804.jpg");
+        listBackground.add("https://img.lovepik.com/background/20211030/medium/lovepik-grassland-scenery-mobile-phone-wallpaper-background-image_400458976.jpg");
+        listBackground.add("https://vanhoadoisong.vn/wp-content/uploads/2022/05/100-hinh-nen-anh-phong-canh-anime-dep-full-hd-may-tinh-dien-thoai-21.jpg");
+        listBackground.add("https://antimatter.vn/wp-content/uploads/2022/04/hinh-nen-dep-cho-dien-thoai-android-phong-canh-dep.jpg");
+        listBackground.add("https://topchiase24h.com/wp-content/uploads/2021/03/Hinh-nen-bien-cho-iphone-1.jpg");
         return listBackground;
     }
 }

@@ -19,8 +19,6 @@
                 android:layout_height="match_parent"
                 android:background="@color/theme_blue"
                 android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
                 android:weightSum="8">
 
                 <ImageView
@@ -28,17 +26,19 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+                    android:paddingVertical="14dp"
                     android:src="@drawable/icon_back_arrow"
                     app:tint="@color/icon_white" />
 
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="5"
-                    android:text="@string/backup"
+                    android:gravity="center_vertical"
+                    android:text="@string/trash"
                     android:textAllCaps="true"
                     android:textColor="@color/text_title"
-                    android:textSize="18sp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
             </LinearLayout>
 

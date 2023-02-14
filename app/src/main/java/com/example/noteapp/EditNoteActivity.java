@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -51,7 +50,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         //  ↓set event
         binding.iconMenu.setOnClickListener(v -> powerMenu.showAsAnchorCenter(v));
         binding.iconBackEditNote.setOnClickListener(v -> {
-            String title = getString(R.string.no_title);
+            String title = "";
             String content = "";
             if (!binding.etNoteTitle.getText().toString().trim().equalsIgnoreCase("")) {
                 title = binding.etNoteTitle.getText().toString();
@@ -59,11 +58,17 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             if (binding.etNoteContent.getHtml() != null) {
                 content = binding.etNoteContent.getHtml();
             }
-            if (nowAction.equals(ACTION_ADD)) {
-                addNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
-            } else if (nowAction.equals(ACTION_EDIT)) {
-                updateNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
-            } else if (nowAction.equals(ACTION_VIEW)) finish();
+            switch (nowAction) {
+                case ACTION_ADD:
+                    addNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
+                    break;
+                case ACTION_EDIT:
+                    updateNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
+                    break;
+                case ACTION_VIEW:
+                    finish();
+                    break;
+            }
         });
     }
 
@@ -74,12 +79,6 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         binding.etNoteContent.setEditorBackgroundColor(getColor(R.color.bg_opacity));
         binding.etNoteContent.setPadding(10, 10, 10, 10);
         binding.etNoteContent.setPlaceholder(getString(R.string.hide_et_content));
-        //hide function don't use
-        binding.actionInsertImage.setVisibility(View.GONE);
-        binding.actionInsertYoutube.setVisibility(View.GONE);
-        binding.actionInsertAudio.setVisibility(View.GONE);
-        binding.actionInsertVideo.setVisibility(View.GONE);
-        binding.actionInsertLink.setVisibility(View.GONE);
         //
         if (nowAction.equals(ACTION_EDIT) || nowAction.equals(ACTION_VIEW)) {
             NoteModel noteModel = (NoteModel) getIntent().getExtras().get(NOTE);
@@ -95,7 +94,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             binding.etNoteTitle.setEnabled(false);
             binding.etNoteContent.setEnabled(false);
             binding.iconMenu.setVisibility(View.GONE);
-            binding.richEdittorBar.setVisibility(View.GONE);
+            binding.richEditorBar.setVisibility(View.GONE);
         }
         configurationRichEdit();
         configurationPopupMenu();
@@ -107,25 +106,25 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         binding.actionRedo.setOnClickListener(v -> editor.redo());
         binding.actionBold.setOnClickListener(v -> editor.setBold());
         binding.actionItalic.setOnClickListener(v -> editor.setItalic());
-        binding.actionSubscript.setOnClickListener(v -> editor.setSubscript());
-        binding.actionSuperscript.setOnClickListener(v -> editor.setSuperscript());
+//        binding.actionSubscript.setOnClickListener(v -> editor.setSubscript());
+//        binding.actionSuperscript.setOnClickListener(v -> editor.setSuperscript());
         binding.actionStrikethroug.setOnClickListener(v -> editor.setStrikeThrough());
         binding.actionUnderline.setOnClickListener(v -> editor.setUnderline());
-        binding.actionHeading1.setOnClickListener(v -> editor.setHeading(1));
-        binding.actionHeading2.setOnClickListener(v -> editor.setHeading(2));
-        binding.actionHeading3.setOnClickListener(v -> editor.setHeading(3));
-        binding.actionHeading4.setOnClickListener(v -> editor.setHeading(4));
-        binding.actionHeading5.setOnClickListener(v -> editor.setHeading(5));
-        binding.actionHeading6.setOnClickListener(v -> editor.setHeading(6));
-        binding.actionIndent.setOnClickListener(v -> editor.setIndent());
-        binding.actionOutdent.setOnClickListener(v -> editor.setOutdent());
-        binding.actionAlignLeft.setOnClickListener(v -> editor.setAlignLeft());
-        binding.actionAlignCenter.setOnClickListener(v -> editor.setAlignCenter());
-        binding.actionAlignRight.setOnClickListener(v -> editor.setAlignRight());
+//        binding.actionHeading1.setOnClickListener(v -> editor.setHeading(1));
+//        binding.actionHeading2.setOnClickListener(v -> editor.setHeading(2));
+//        binding.actionHeading3.setOnClickListener(v -> editor.setHeading(3));
+//        binding.actionHeading4.setOnClickListener(v -> editor.setHeading(4));
+//        binding.actionHeading5.setOnClickListener(v -> editor.setHeading(5));
+//        binding.actionHeading6.setOnClickListener(v -> editor.setHeading(6));
+//        binding.actionIndent.setOnClickListener(v -> editor.setIndent());
+//        binding.actionOutdent.setOnClickListener(v -> editor.setOutdent());
+//        binding.actionAlignLeft.setOnClickListener(v -> editor.setAlignLeft());
+//        binding.actionAlignCenter.setOnClickListener(v -> editor.setAlignCenter());
+//        binding.actionAlignRight.setOnClickListener(v -> editor.setAlignRight());
         binding.actionBlockquote.setOnClickListener(v -> editor.setBlockquote());
         binding.actionInsertBullets.setOnClickListener(v -> editor.setBullets());
         binding.actionInsertNumber.setOnClickListener(v -> editor.setNumbers());
-        binding.actionInsertCheckbock.setOnClickListener(v -> editor.insertTodo());
+        binding.actionInsertCheckbox.setOnClickListener(v -> editor.insertTodo());
     }
 
     private void configurationPopupMenu() {
@@ -215,6 +214,7 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
         listTheme.add(new OptionNoteTheme(R.color.bg_note_blue_green, TYPE_COLOR, R.color.tt_note_blue_green, TYPE_COLOR));
         listTheme.add(new OptionNoteTheme(R.color.bg_note_aquamarine, TYPE_COLOR, R.color.tt_note_turquoise, TYPE_COLOR));
         listTheme.add(new OptionNoteTheme(R.color.bg_note_pink, TYPE_COLOR, R.color.tt_note_pink, TYPE_COLOR));
+        listTheme.add(new OptionNoteTheme(R.color.bg_note_malibu_bleach, TYPE_COLOR, R.color.tt_note_malibu_bleach, TYPE_COLOR));
         return listTheme;
     }
 

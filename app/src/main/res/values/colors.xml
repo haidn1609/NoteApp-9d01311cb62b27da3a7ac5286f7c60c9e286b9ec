@@ -20,6 +20,7 @@
     <color name="bg_note_aquamarine">#98DBC6</color>
     <color name="bg_note_grey">#EAF1F1</color>
     <color name="bg_note_late">#DDBC95</color>
+    <color name="bg_note_malibu_bleach">#00f2fe</color>
     <!--    title note-->
     <color name="tt_note_green">#94FDAE</color>
     <color name="tt_note_orange">#FFAD36</color>
@@ -31,6 +32,7 @@
     <color name="tt_note_turquoise">#5BC8AC</color>
     <color name="tt_note_grey">#979898</color>
     <color name="tt_note_coffee">#B38867</color>
+    <color name="tt_note_malibu_bleach">#4facfe</color>
     <!--    theme color-->
     <color name="theme_blue">#2598F5</color>
     <color name="theme_orange">#FBAC47</color>

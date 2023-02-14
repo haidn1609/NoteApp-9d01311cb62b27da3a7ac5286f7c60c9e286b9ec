@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Note App</string>
+    <string name="title">Note App</string>
+    <string name="background">Ảnh Nền</string>
+    <string name="theme">Theme</string>
+    <string name="change_theme">Đổi Theme</string>
+    <string name="create_new">Tạo Ghi Chú Mới</string>
+    <string name="delete">Xóa Ghi Chú</string>
+    <string name="not_note">Hiện chưa có ghi chú nào.</string>
+    <string name="hide_et_title">Title...</string>
+    <string name="hide_et_content">" "</string>
+    <string name="toast_change_theme">Đổi theme thành công.</string>
+    <string name="toast_change_bg">Đổi ảnh nền thành công.</string>
+    <string name="no_title">Tiêu đề trống</string>
+    <string name="action_search">Tìm Kiếm</string>
+    <string name="hide_txt_select">ĐÃ CHỌN</string>
+    <string name="hide_txt_note">GHI CHÚ</string>
+    <string name="view_grid">Xem dạng lưới</string>
+    <string name="view_list">Xem dạng list</string>
+    <string name="trash">Thùng rác</string>
+    <string name="dial_delete_title">Xóa ghi chú</string>
+    <string name="dial_delete_mess1">Bán có muốn xóa ghi chú này khoonh?</string>
+    <string name="dial_delete_mess2">Bán có muốn xóa toàn bộ ghi chú này không?</string>
+    <string name="dial_btn_cancel">Hủy</string>
+    <string name="dial_btn_delete">Xóa</string>
+</resources>

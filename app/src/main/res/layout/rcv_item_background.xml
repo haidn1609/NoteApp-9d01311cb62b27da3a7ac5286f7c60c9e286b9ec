@@ -10,7 +10,7 @@
     <ImageView
         android:background="@color/bg_white"
         android:id="@+id/img_bg_item"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </androidx.cardview.widget.CardView>

@@ -82,7 +82,7 @@ public class BackupNoteActivity extends AppCompatActivity implements KEY {
         dialogController.setDialogOnEventListener(this::deleteMultiNote);
     }
 
-    //    ↓ set vỉew
+    //    ↓ set view
     private void initView() {
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
         binding.rcvListBackupNote.setLayoutManager(layoutManager);
