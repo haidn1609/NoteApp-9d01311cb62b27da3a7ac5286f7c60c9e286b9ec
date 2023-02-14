@@ -16,11 +16,11 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class RcvBackgroundAdapter extends RecyclerView.Adapter<RcvBackgroundAdapter.ViewHolder> implements KEY {
-    private List<String> listBackground;
+    private List<Integer> listBackground;
     private Context mContext;
     private RcvBgItemClick rcvBgItemClick;
 
-    public void setDataAdapter(List<String> listBackground, Context mContext) {
+    public void setDataAdapter(List<Integer> listBackground, Context mContext) {
         this.listBackground = listBackground;
         this.mContext = mContext;
         notifyDataSetChanged();
@@ -38,8 +38,8 @@ public class RcvBackgroundAdapter extends RecyclerView.Adapter<RcvBackgroundAdap
 
     @Override
     public void onBindViewHolder(@NonNull RcvBackgroundAdapter.ViewHolder holder, int position) {
-        String url = listBackground.get(position);
-        Picasso.get().load(url)
+        int url = listBackground.get(position);
+        Picasso.get().load(url).resize(1080,1920)
                 .error(R.drawable.baseline_error_24)
                 .into(holder.imgBgItem);
         holder.imgBgItem.setOnClickListener(v -> rcvBgItemClick.selectBgItem(url));

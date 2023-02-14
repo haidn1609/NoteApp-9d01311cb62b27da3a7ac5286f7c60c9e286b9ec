@@ -74,7 +74,9 @@ public class EditTextNoteFragment extends Fragment implements KEY {
         binding.actionInsertNumber.setOnClickListener(v -> editor.setNumbers());
         binding.actionInsertCheckbox.setOnClickListener(v -> editor.insertTodo());
     }
-
+    private void insertTable(int colCount, int rowCount){
+        String trigger ="javascript:insertTable('" + colCount + "x" + rowCount + "')";
+    }
     public String getContentHtml(){
         return binding.etNoteContent.getHtml();
     }

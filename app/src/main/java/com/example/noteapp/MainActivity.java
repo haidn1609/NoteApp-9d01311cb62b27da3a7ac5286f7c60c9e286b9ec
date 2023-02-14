@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.transition.Fade;
 import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
@@ -143,6 +142,13 @@ public class MainActivity extends AppCompatActivity implements KEY {
             itEditNote.putExtra(NOTE_TYPE, NOTE_TYPE_TEXT);
             activityResultLauncher.launch(itEditNote);
         });
+        binding.btnAddList.setOnClickListener(v -> {
+            binding.floatingMenuBt.collapse();
+            Intent itEditNote = new Intent(MainActivity.this, EditNoteActivity.class);
+            itEditNote.putExtra(ACTION, ACTION_ADD);
+            itEditNote.putExtra(NOTE_TYPE, NOTE_TYPE_LIST);
+            activityResultLauncher.launch(itEditNote);
+        });
         rcvNoteAdapter.setOnClickItem(new RcvNoteItemClick() {
             @Override
             public void editItemClick(NoteModel noteModel) {
@@ -182,7 +188,9 @@ public class MainActivity extends AppCompatActivity implements KEY {
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initView() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        Picasso.get().load(sp.getString(BACKGROUND_COLOR, BLANK_BG)).into(binding.imgBgMain);
+        Picasso.get().load(sp.getInt(BACKGROUND_COLOR, R.drawable.bg_blank))
+                .resize(1080, 1920)
+                .into(binding.imgBgMain);
         configurationPopupMenu();
         binding.appBar.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
         binding.appBarSelect.setBackgroundColor(getColor(Integer.parseInt(sp.getString(APPBAR_COLOR, String.valueOf(R.color.theme_blue)))));
@@ -277,6 +285,15 @@ public class MainActivity extends AppCompatActivity implements KEY {
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isShowSearch || rcvNoteAdapter.isSelectMode()) {
+            getListNote();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     //    ↓ room database
     private void getListNote() {
         showSelectBar(false);
@@ -314,6 +331,7 @@ public class MainActivity extends AppCompatActivity implements KEY {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(NOTE, noteModel);
                 itEditNote.putExtra(ACTION, ACTION_EDIT);
+                itEditNote.putExtra(NOTE_TYPE, noteModel.getType());
                 itEditNote.putExtras(bundle);
                 activityResultLauncher.launch(itEditNote);
             }

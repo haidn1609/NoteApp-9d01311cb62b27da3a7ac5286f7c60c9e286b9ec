@@ -59,7 +59,7 @@ public class RcvBackupNoteAdapter extends RecyclerView.Adapter<RcvBackupNoteAdap
         SimpleDateFormat formatDay = new SimpleDateFormat("dd/MM/yyyy");
         holder.noteTile.setBackgroundColor(mContext.getColor(note.getColorTitle()));
         holder.layoutNoteItem.setBackgroundTintList(mContext.getColorStateList(note.getColorBackground()));
-        holder.tvTileNote.setText(note.getTitle());
+        holder.tvTileNote.setText(note.getTitle().trim().equals("") ? mContext.getString(R.string.no_title) : note.getTitle());
         holder.tvContentNote.setText(Html.fromHtml(note.getContent(), Html.FROM_HTML_MODE_COMPACT));
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
 //        ↓set event

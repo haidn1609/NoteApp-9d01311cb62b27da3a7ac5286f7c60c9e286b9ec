@@ -113,6 +113,10 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         return countSelect;
     }
 
+    public boolean isSelectMode() {
+        return selectMode;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTileNote;
         TextView tvContentNote;

@@ -136,6 +136,7 @@ public class BackupNoteActivity extends AppCompatActivity implements KEY {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(NOTE, noteModel);
                 itEditNote.putExtra(ACTION, ACTION_VIEW);
+                itEditNote.putExtra(NOTE_TYPE, NOTE_TYPE_TEXT);
                 itEditNote.putExtras(bundle);
                 startActivity(itEditNote);
             }

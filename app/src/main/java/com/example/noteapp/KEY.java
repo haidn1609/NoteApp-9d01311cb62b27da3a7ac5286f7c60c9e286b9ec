@@ -1,7 +1,6 @@
 package com.example.noteapp;
 
 public interface KEY {
-    String BLANK_BG = "https://www.whitescreen.online/image/white-background.png";
     String VIEW_TYPE = "V_TYPE";
     String VIEW_GRID = "V_GRID";
     String VIEW_LIST = "V_LIST";
