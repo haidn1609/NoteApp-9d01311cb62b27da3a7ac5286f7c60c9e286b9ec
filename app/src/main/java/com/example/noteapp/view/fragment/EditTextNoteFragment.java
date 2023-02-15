@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +25,15 @@ public class EditTextNoteFragment extends Fragment implements KEY {
     private FragmentEditTextNoteBinding binding;
 
     private String contentHtml;
+    private String contentType;
     private String action;
-    public static EditTextNoteFragment newInstance(String action,String contentHtml) {
+
+    public static EditTextNoteFragment newInstance(String action, String type, String contentHtml) {
         EditTextNoteFragment fragment = new EditTextNoteFragment();
         Bundle args = new Bundle();
         args.putString(NOTE_CONTENT, contentHtml);
         args.putString(ACTION, action);
+        args.putString(NOTE_TYPE, type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -41,6 +45,7 @@ public class EditTextNoteFragment extends Fragment implements KEY {
         if (bdReceive != null) {
             contentHtml = bdReceive.getString(NOTE_CONTENT);
             action = bdReceive.getString(ACTION);
+            contentType = bdReceive.getString(NOTE_TYPE);
         }
     }
 
@@ -58,10 +63,15 @@ public class EditTextNoteFragment extends Fragment implements KEY {
         editor.setEditorBackgroundColor(requireContext().getColor(R.color.bg_opacity));
         editor.setPadding(10, 10, 10, 10);
         editor.setPlaceholder(requireContext().getString(R.string.hide_et_content));
-        if (contentHtml != null) editor.setHtml(contentHtml);
-        if(action.equals(ACTION_VIEW)){
+        editor.setHtml(contentHtml);
+        if (action.equals(ACTION_VIEW)) {
             editor.setEnabled(false);
             binding.richEditorBar.setVisibility(View.GONE);
+        }
+        if (contentType.equals(NOTE_TYPE_LIST) &&
+                (editor.getHtml().trim().equals("") || editor.getHtml().trim().equalsIgnoreCase("<br>"))) {
+            editor.focusEditor();
+            editor.insertTodo();
         }
         binding.actionUndo.setOnClickListener(v -> editor.undo());
         binding.actionRedo.setOnClickListener(v -> editor.redo());
@@ -73,11 +83,14 @@ public class EditTextNoteFragment extends Fragment implements KEY {
         binding.actionInsertBullets.setOnClickListener(v -> editor.setBullets());
         binding.actionInsertNumber.setOnClickListener(v -> editor.setNumbers());
         binding.actionInsertCheckbox.setOnClickListener(v -> editor.insertTodo());
+        binding.actionInsertTable.setOnClickListener(v -> {
+            editor.insertSubTodo();
+        });
+
+        editor.setOnTextChangeListener(text -> Log.d("TAG", "configurationRichEdit: "+text));
     }
-    private void insertTable(int colCount, int rowCount){
-        String trigger ="javascript:insertTable('" + colCount + "x" + rowCount + "')";
-    }
-    public String getContentHtml(){
+
+    public String getContentHtml() {
         return binding.etNoteContent.getHtml();
     }
 }

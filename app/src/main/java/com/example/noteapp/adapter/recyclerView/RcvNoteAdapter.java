@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.webkit.WebView;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ import com.example.noteapp.model.NoteModel;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import jp.wasabeef.richeditor.RichEditor;
 
 public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHolder> implements Filterable {
 
@@ -56,6 +59,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onBindViewHolder(@NonNull RcvNoteAdapter.ViewHolder holder, int position) {
         NoteModel note = noteList.get(position);
@@ -66,6 +70,8 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         holder.tvTileNote.setText(note.getTitle().trim().equals("") ? mContext.getString(R.string.no_title) : note.getTitle());
         holder.tvContentNote.setText(Html.fromHtml(note.getContent(), Html.FROM_HTML_MODE_COMPACT));
         holder.tvModifyDateNote.setText(formatDay.format(note.getModifyDay()));
+
+        configurationRichEditor(holder.richViewContent,note.getContent());
 
         holder.layoutNoteItem.setOnClickListener(v -> {
             if (!selectMode) {
@@ -103,7 +109,14 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             return true;
         });
     }
-
+    private void configurationRichEditor(RichEditor editor, String html){
+        editor.setEditorFontSize(12);
+        editor.setBackgroundColor(mContext.getColor(R.color.bg_opacity));
+        editor.setEditorBackgroundColor(mContext.getColor(R.color.bg_opacity));
+        editor.setPadding(10, 10, 10, 10);
+        editor.setHtml(html);
+        editor.setEnabled(false);
+    }
     @Override
     public int getItemCount() {
         return noteList == null ? 0 : noteList.size();
@@ -121,6 +134,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
         TextView tvTileNote;
         TextView tvContentNote;
         TextView tvModifyDateNote;
+        RichEditor richViewContent;
         View noteTile;
         CardView layoutNoteItem;
         LottieAnimationView lottieAnimationView;
@@ -133,6 +147,7 @@ public class RcvNoteAdapter extends RecyclerView.Adapter<RcvNoteAdapter.ViewHold
             noteTile = itemView.findViewById(R.id.note_title);
             layoutNoteItem = itemView.findViewById(R.id.layout_item_note);
             lottieAnimationView = itemView.findViewById(R.id.lottie_checked);
+            richViewContent = itemView.findViewById(R.id.rich_view_content);
         }
     }
 

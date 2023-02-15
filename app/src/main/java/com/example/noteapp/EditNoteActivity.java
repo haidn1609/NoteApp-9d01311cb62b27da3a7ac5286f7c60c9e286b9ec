@@ -20,7 +20,6 @@ import com.example.noteapp.model.NoteModel;
 import com.example.noteapp.model.OptionNoteTheme;
 import com.example.noteapp.room.AppDatabase;
 import com.example.noteapp.view.BottomSheetThemeFragment;
-import com.example.noteapp.view.fragment.EditListNoteFragment;
 import com.example.noteapp.view.fragment.EditTextNoteFragment;
 import com.skydoves.powermenu.MenuAnimation;
 import com.skydoves.powermenu.PowerMenu;
@@ -45,7 +44,6 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
     private PowerMenu powerMenu;
     private OptionNoteTheme optionNoteTheme;
     private EditTextNoteFragment editTextNoteFragment;
-    private EditListNoteFragment editListNoteFragment;
     private Window window;
 
     @Override
@@ -65,19 +63,15 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
             if (!binding.etNoteTitle.getText().toString().trim().equalsIgnoreCase("")) {
                 title = binding.etNoteTitle.getText().toString();
             }
-            if (noteType.equalsIgnoreCase(NOTE_TYPE_TEXT) && editTextNoteFragment.getContentHtml() != null) {
+            if (editTextNoteFragment.getContentHtml() != null) {
                 content = editTextNoteFragment.getContentHtml();
             }
             switch (nowAction) {
                 case ACTION_ADD:
-                    if (noteType.equalsIgnoreCase(NOTE_TYPE_TEXT)) {
-                        addNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
-                    } else finish();
+                    addNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
                     break;
                 case ACTION_EDIT:
-                    if (noteType.equalsIgnoreCase(NOTE_TYPE_TEXT)) {
-                        updateNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
-                    } else finish();
+                    updateNoteItem(title, content, optionNoteTheme.getBgValue(), optionNoteTheme.getTtValue());
                     break;
                 case ACTION_VIEW:
                     finish();
@@ -89,13 +83,8 @@ public class EditNoteActivity extends AppCompatActivity implements KEY {
     //     ↓ edit view
     private void initView() {
         NoteModel noteModel = (NoteModel) getIntent().getExtras().get(NOTE);
-        if (noteType.equalsIgnoreCase(NOTE_TYPE_TEXT)) {
-            editTextNoteFragment = EditTextNoteFragment.newInstance(nowAction, noteModel != null ? noteModel.getContent() : "");
-            getFragment(editTextNoteFragment);
-        } else {
-            editListNoteFragment = EditListNoteFragment.newInstance();
-            getFragment(editListNoteFragment);
-        }
+        editTextNoteFragment = EditTextNoteFragment.newInstance(nowAction, noteType, noteModel != null ? noteModel.getContent() : "");
+        getFragment(editTextNoteFragment);
         if (nowAction.equals(ACTION_EDIT) || nowAction.equals(ACTION_VIEW)) {
             assert noteModel != null;
             binding.etNoteTitle.setText(noteModel.getTitle());

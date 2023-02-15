@@ -57,7 +57,15 @@
             android:padding="10dp"
             android:textColor="@color/text_black"
             android:textSize="10sp"
+            android:visibility="gone"
             tools:ignore="SmallSp" />
+
+        <jp.wasabeef.richeditor.RichEditor
+            android:id="@+id/rich_view_content"
+            android:layout_above="@id/tv_note_modify"
+            android:layout_below="@id/tv_title_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tv_note_modify"
